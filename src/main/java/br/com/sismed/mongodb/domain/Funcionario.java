@@ -9,7 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 @Document(collation = "sismed_funcionario")
 public class Funcionario extends AbstractEntity{
 
-	
+	private static final long serialVersionUID = 1L;
+
 	private String nome;
 	
 	private String cpf;
@@ -41,7 +42,7 @@ public class Funcionario extends AbstractEntity{
 	private String escolaridade;
 	
 	//Criar a classe de Endereço;
-	private String endereco;
+	//private String endereco;
 	
 	private String naturalidade;
 	
@@ -166,13 +167,13 @@ public class Funcionario extends AbstractEntity{
 		this.escolaridade = escolaridade;
 	}
 
-	public String getEndereco() {
+	/*public String getEndereco() {
 		return endereco;
 	}
 
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
-	}
+	}*/
 
 	public String getNaturalidade() {
 		return naturalidade;

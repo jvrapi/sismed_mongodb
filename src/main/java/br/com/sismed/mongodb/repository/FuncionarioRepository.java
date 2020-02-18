@@ -11,22 +11,22 @@ import br.com.sismed.mongodb.domain.Funcionario;
 @Repository
 public interface FuncionarioRepository extends MongoRepository<Funcionario, Long>{
 	
-	@Query ("{'id':?0}")
+	@Query ("{ 'id':?0 }")
 	List<Funcionario> ListarFuncionarioId(Long id);
 	
-	@Query ("{'nome'?0}")
+	@Query ("{ 'nome':?0 }")
 	List<Funcionario> ListarFuncionarioNome(String nome);
 	
-	@Query ("{'cpf'?0}")
+	@Query ("{ 'cpf':?0 }")
 	List<Funcionario> ListarFuncionarioCPF(String cpf);
 	
-	@Query ("{'celular'?0}")
+	@Query ("{ 'celular':?0 }")
 	List<Funcionario> ListarFuncionarioCelular(String celular);
 	
-	@Query ("{'especialidade'?0}")
+	@Query ("{ 'especialidade':?0 }")
 	List<Funcionario> ListarFuncionarioEspecialidade(String especialidade);
 	
-	@Query ("{'especialidade'?0}")
+	@Query (value="{ 'crm':?0 }",fields="{'crm': not null}")
 	List<Funcionario> findAll();
 	
 }
