@@ -41,7 +41,6 @@ public class Funcionario extends AbstractEntity{
 	
 	private String escolaridade;
 	
-	//Criar a classe de Endereço;
 	//private String endereco;
 	
 	private String naturalidade;
