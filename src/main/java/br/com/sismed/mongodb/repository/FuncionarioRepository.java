@@ -26,7 +26,7 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Long
 	@Query ("{ 'especialidade':?0 }")
 	List<Funcionario> ListarFuncionarioEspecialidade(String especialidade);
 	
-	@Query (value="{ 'crm':?0 }",fields="{'crm': not null}")
-	List<Funcionario> findAll();
+	/*@Query (value="{ 'crm':?0 }",fields="{'crm': not null}")
+	List<Funcionario> findAll();*/
 	
 }

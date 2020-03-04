@@ -2,7 +2,7 @@ package br.com.sismed.mongodb.domain;
 
 import java.io.Serializable;
 
-
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 
@@ -15,7 +15,7 @@ public abstract class AbstractEntity  implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id // Identity = auto incremento no mysql
+	@Id ObjectId databaseId;// Identity = auto incremento no mysql
 	private Long id;
 
 	public Long getId() {

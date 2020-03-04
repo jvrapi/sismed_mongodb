@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@Document(collation = "sismed_funcionario")
+@Document(collection = "sismed_funcionario")
 public class Funcionario extends AbstractEntity{
 
 	private static final long serialVersionUID = 1L;
