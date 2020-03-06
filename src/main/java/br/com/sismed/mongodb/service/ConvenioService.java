@@ -17,4 +17,13 @@ public class ConvenioService {
 	public List<Convenio> buscarTodos() {
 		return repository.findAll();
 	}
+
+	public void salvar(Convenio convenio ) {
+		repository.save(convenio);
+		
+	}
+	
+	public Convenio lastRecord() {
+		return repository.findTopByOrderByIdDesc();
+	}
 }

@@ -8,11 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 
 
-@Document(collation = "sismed_convenio")
+@Document(collection = "sismed_convenio")
 public class Convenio extends AbstractEntity{
-
-	private static final long serialVersionUID = 1L;
-
 
 
 	private String nome;
@@ -29,7 +26,7 @@ public class Convenio extends AbstractEntity{
 	
 	private String registro_ans;
 
-	
+	private DadosBancarios dadosb;
 	
 	
 
@@ -78,5 +75,19 @@ public class Convenio extends AbstractEntity{
 		this.registro_ans = registro_ans;
 	}
 
+
+	public DadosBancarios getDadosb() {
+		return dadosb;
+	}
+
+
+	public void setDadosb(DadosBancarios dadosb) {
+		this.dadosb = dadosb;
+	}
+
+
+
+
+		
 	
 }
