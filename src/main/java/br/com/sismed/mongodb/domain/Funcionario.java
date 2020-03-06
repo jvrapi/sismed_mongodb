@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class Funcionario extends AbstractEntity{
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private String nome;
 	
 	private String cpf;
@@ -41,7 +41,7 @@ public class Funcionario extends AbstractEntity{
 	
 	private String escolaridade;
 	
-	//private String endereco;
+	private Endereco endereco;
 	
 	private String naturalidade;
 	
@@ -53,7 +53,7 @@ public class Funcionario extends AbstractEntity{
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
-	
+
 	public String getNome() {
 		return nome;
 	}
@@ -166,13 +166,13 @@ public class Funcionario extends AbstractEntity{
 		this.escolaridade = escolaridade;
 	}
 
-	/*public String getEndereco() {
+	public Endereco getEndereco() {
 		return endereco;
 	}
 
-	public void setEndereco(String endereco) {
+	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
-	}*/
+	}
 
 	public String getNaturalidade() {
 		return naturalidade;

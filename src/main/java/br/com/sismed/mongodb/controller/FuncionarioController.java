@@ -1,9 +1,12 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.sismed.mongodb.domain.Funcionario;
@@ -22,7 +25,9 @@ public class FuncionarioController {
 	
 	@GetMapping("/listar")
 	public String listarTodos(ModelMap model){
-		model.addAttribute("funcionario", service.buscarTodos());
+		List<Funcionario> listFuncionario = service.buscarTodos();
+		System.out.println(listFuncionario.get(0).getId());
+		model.addAttribute("funcionario", listFuncionario);
 		return "funcionario/lista";
 	}
 	
@@ -31,10 +36,10 @@ public class FuncionarioController {
 		return "funcionario/cadastro";
 	}
 	
-	@GetMapping("/salvar")
+	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario) {
 
 		service.salvar(funcionario);
-		return "funcionario/listar";
+		return "redirect:/funcionario/listar";
 	}
 }
