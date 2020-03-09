@@ -11,6 +11,9 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 @Document(collection = "sismed_convenio")
 public class Convenio extends AbstractEntity{
 
+	private static final long serialVersionUID = 1L;
+
+
 
 	private String nome;
 	
