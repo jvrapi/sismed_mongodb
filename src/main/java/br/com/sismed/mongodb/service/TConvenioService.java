@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,23 @@ public class TConvenioService {
 	
 	
 	@Transactional(readOnly=true)
-	public List<TConvenio> listarTodos(){
-		return repository.findAll();
+	public List<TConvenio> listarTodos(String id){
+		return repository.findByConvenio_id(id);
+	}
+	
+	@Transactional(readOnly=true)
+	public Optional<TConvenio> buscarPorId(String id) {
+		return repository.findById(id);
 	}
 	
 	@Transactional(readOnly=false)
 	public void salvar(TConvenio tconvenio) {
 		repository.save(tconvenio);
 	}
+	
+	@Transactional(readOnly=false)
+	public void excluir(String id) {
+		repository.deleteById(id);
+	}
+	
 }

@@ -72,13 +72,12 @@
                                     <br>
                                     <label for="nome"> Nome</label>
                                     <input type="text" class="form-control " id="nome" placeholder="Ex. 400" autofocus="autofocus" th:field="*{nome}" onkeyup="maiuscula(this)" required autocomplete="off">
-                                    <input type="hidden" id="id" th:field="*{id}" />
+                                   
 
                                     <br>
+                                    
+                                    <input type="hidden" th:value="${convenio.id}" th:name="convenio">
 
-                                    <select id="convenio_id" class="form-control" th:field="*{convenio}" hidden>
-                                        <option th:each="c : ${convenio}" th:value="${c.id}" th:text="${c.nome}"></option>
-                                    </select>
 
                                 </div>
                             </div>
