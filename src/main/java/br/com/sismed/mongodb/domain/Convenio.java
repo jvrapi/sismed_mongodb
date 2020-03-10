@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +33,7 @@ public class Convenio extends AbstractEntity{
 	private DadosBancarios dadosb;
 	
 	
-
+	private List<TConvenio> tipos;
 	
 	
 	/*Metodos get's e set's */
@@ -43,6 +44,16 @@ public class Convenio extends AbstractEntity{
 	}
 	
 	
+	public List<TConvenio> getTipos() {
+		return tipos;
+	}
+
+
+	public void setTipos(List<TConvenio> tipos) {
+		this.tipos = tipos;
+	}
+
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}

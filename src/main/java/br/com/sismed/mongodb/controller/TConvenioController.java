@@ -1,9 +1,9 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
@@ -37,19 +38,24 @@ public class TConvenioController {
 	}
 	
 	@PostMapping("/salvar")
-	public String salvarTipo(TConvenio tconvenio, RedirectAttributes attr) {
-		String id = tconvenio.getConvenio().getId();
-		tservice.salvar(tconvenio);
+	public String salvarTipo(TConvenio tconvenio, @RequestParam("convenio") String id, RedirectAttributes attr) {
+		Convenio convenio = service.buscarPorId(id).get();
+		List<TConvenio> tc = new ArrayList<TConvenio>();
+		
+		tc.add(tconvenio);
+		convenio.setTipos(tc);
+		tservice.salvar(tconvenio, id);
 		attr.addFlashAttribute("sucesso", "Tipo de Convenio cadastrado com sucesso");
 		return "redirect:/tconvenios/cadastrar/"+id;
 	}
 	
 	@GetMapping("/listar/{id}")
 	public String listarTipos(@PathVariable("id") String id, ModelMap model) {
-		List<TConvenio> tc = tservice.listarTodos(id);
+	
+		
 		Convenio convenio = service.buscarPorId(id).get();
 		model.addAttribute("convenio", convenio);
-		model.addAttribute("tconvenio", tc);
+		model.addAttribute("tconvenio", convenio);
 		return "tconvenio/lista";
 	}
 	
@@ -60,13 +66,13 @@ public class TConvenioController {
 		return "tconvenio/editar";
 	}
 	
-	@PostMapping("/atualizar")
+	/*@PostMapping("/atualizar")
 	public String atualizarTipo(TConvenio tconvenio, RedirectAttributes attr) {
 		String id = tconvenio.getId();
 		tservice.salvar(tconvenio);
 		attr.addFlashAttribute("sucesso", "Tipo de Convenio alterado com sucesso");
 		return "redirect:/tconvenios/editar/" + id;
-	}
+	}*/
 	
 	@GetMapping("/excluir/{id}/{convenio_id}")
 	public String excluirTipo(@PathVariable String id, @PathVariable String convenio_id, RedirectAttributes attr) {
