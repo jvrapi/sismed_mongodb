@@ -72,7 +72,7 @@
             <div th:replace="fragmentos/alert"></div>
             <div th:replace="fragmentos/modal"></div>
 
-            <div th:replace="fragmentos/modalSenha :: modalSenha"></div>
+            
             <div th:replace="fragmentos/modal :: modal"></div>
         </div>
 
@@ -87,7 +87,7 @@
 
                     <a class="btn btn-outline-secondary float-right ml-2" href="/funcionario/listar" role="button"> <i class="fas fa-chevron-left"></i> Voltar</a>
 
-                    <button th:id="${funcionario.id}" type="button" class="btn btn-outline-danger classid float-right" data-toggle="modal" data-target="#myModal" sec:authorize="hasAuthority('ADMIN')">Excluir</button>
+                    <button  type="button" class="btn btn-outline-danger classid float-right" data-toggle="modal" data-target="#myModal" sec:authorize="hasAuthority('ADMIN')">Excluir</button>
 
                     <button class="btn btn-outline-primary float-right mr-2" id="btn_editar" type="button" onclick="executar(this)" sec:authorize="hasAuthority('ADMIN')">Editar</button>
 
@@ -199,8 +199,10 @@
                         </div>
 
                         <br>
+                  
+                        <input th:text="${crm}">
 
-                        <div th:if="${funcionario.crm != null}">
+                        <div th:if="${crm}">
 
                             <h5 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0;">Informações do Médico</h5>
 

@@ -1,16 +1,17 @@
 package br.com.sismed.mongodb.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.sismed.mongodb.domain.Funcionario;
-import br.com.sismed.mongodb.repository.FuncionarioRepository;
 import br.com.sismed.mongodb.service.FuncionarioService;
 
 @Controller
@@ -20,13 +21,9 @@ public class FuncionarioController {
 	@Autowired
 	private FuncionarioService service;
 	
-	@Autowired
-	private FuncionarioRepository slvr;
-	
 	@GetMapping("/listar")
 	public String listarTodos(ModelMap model){
 		List<Funcionario> listFuncionario = service.buscarTodos();
-		System.out.println(listFuncionario.get(0).getId());
 		model.addAttribute("funcionario", listFuncionario);
 		return "funcionario/lista";
 	}
@@ -38,8 +35,34 @@ public class FuncionarioController {
 	
 	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario) {
-
+		
+		Funcionario func = service.ultimoRegistro();
+		
+		Long matricula;
+		
+		if(func != null) {
+			matricula = func.getMatricula()+1;
+		}
+		else {
+			matricula = 1L;
+		}
+		
+		funcionario.setMatricula(matricula);
+		
 		service.salvar(funcionario);
 		return "redirect:/funcionario/listar";
+		
+	}
+	
+	@GetMapping("/editar/{id}")
+	public String preEditar(@PathVariable("id") String id, ModelMap model) {
+        Optional<Funcionario> func = service.buscarporId(id);
+        
+        //service.findOne(id).ifPresent(o -> model.addAttribute("id", o));
+        
+        System.out.println(func.get().getCrm());
+        model.addAttribute("funcionario", func);
+		return "funcionario/editar";
+		
 	}
 }

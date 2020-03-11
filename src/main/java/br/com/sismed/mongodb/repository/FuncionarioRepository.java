@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import br.com.sismed.mongodb.domain.Funcionario;
 
 @Repository
-public interface FuncionarioRepository extends MongoRepository<Funcionario, Long>{
+public interface FuncionarioRepository extends MongoRepository<Funcionario, String>{
 	
 	@Query (value = "{ 'id':?0 }")
 	public List<Funcionario> ListarFuncionarioId(Long id);
@@ -26,7 +26,9 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Long
 	@Query ("{ 'especialidade':?0 }")
 	public List<Funcionario> ListarFuncionarioEspecialidade(String especialidade);
 	
-	/*@Query (value="{ 'crm':?0 }",fields="{'crm': not null}")
-	List<Funcionario> findAll();*/
+	@Query (value="{ 'crm':?0 }")
+	public List<Funcionario> ListarFuncionarioCRM(String crm);
+	
+	Funcionario findTopByOrderByIdDesc();
 	
 }

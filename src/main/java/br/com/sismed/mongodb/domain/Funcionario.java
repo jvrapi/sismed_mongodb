@@ -11,6 +11,8 @@ public class Funcionario extends AbstractEntity{
 
 	private static final long serialVersionUID = 1L;
 	
+	private Long matricula;
+	
 	private String nome;
 	
 	private String cpf;
@@ -53,6 +55,14 @@ public class Funcionario extends AbstractEntity{
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
+	
+	public Long getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(Long matricula) {
+		this.matricula = matricula;
+	}
 
 	public String getNome() {
 		return nome;

@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.service;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,12 @@ public class TConvenioService {
 		}
 		
 		
+	}
+
+
+	public List<TConvenio> listarTodos(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
