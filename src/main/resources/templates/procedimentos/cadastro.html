@@ -3,25 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <script type="text/javascript" src="/js/tconvenio/modal.js"></script>
-    <script type="text/javascript" src="/js/tconvenio/editar.js"></script>
-    <script type="text/javascript" src="/js/tconvenio/busca.js"></script>
-    <script type="text/javascript" src="/js/alerta.js"></script>
+    <script type="text/javascript" src="/js/procedimento/busca.js"></script>
 </head>
 
 <body>
     <section layout:fragment="corpo">
         <div id="content">
-            <nav class="navbar navbar-expand-lg navbar-light" th:fragment="content">
+            <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="collapse navbar-collapse" id="conteudoNavbarSuportado">
 
                     <div class="btn-group">
-                        <button type="button" class="btn" id="dropdownMenu2" value="1">Nome</button>
+                        <button type="button" class="btn" id="dropdownMenu2" value="1">Descrição</button>
                         <button type="button" class="btn dropdown-toggle dropdown-toggle-split" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu">
-                            <button class="dropdown-item" type="button" value="1" onclick="muda()">Nome</button>
+                            <button class="dropdown-item" type="button" value="1" onclick="muda()">Descrição</button>
 
                         </div>
                     </div>
@@ -52,50 +49,57 @@
 
                 </div>
             </nav>
-            <div class="container">
+            <div class="container ajustarTexto">
                 <div th:replace="fragmentos/alert" class="container"></div>
                 <div th:replace="fragmentos/modal" class="container"></div>
             </div>
 
-            <div class="container" style="width: 98%">
-                <form th:action="@{/tconvenios/atualizar}" th:object="${tconvenio}" method="POST">
-                    <div id="div_botao" class="detalhes">
-                        <h4 class="titulo"> 
+            <div class="container ">
+                <div>
 
-								<strong th:text="${convenio.nome} + ' | ' "> </strong> Edição de Tipo 
-							</h4>
-                        <a class="btn btn-outline-secondary float-right ml-2" th:href="@{/tconvenios/listar/{id} (id=${convenio.id}) }">
-                            <i class="fas fa-chevron-left"> </i> Voltar</a>
-                        <button th:id="${tconvenio.id}" type="button" class="btn btn-outline-danger classid float-right" data-toggle="modal" data-target="#myModal">Excluir</button>
-                        <button class="btn btn-outline-primary float-right mr-2" id="btn_editar" style="margin-left: 10px;" type="button" onclick="executar(this)">Editar</button>
+                </div>
+
+                <form th:action=" @{/procedimentos/salvar} " th:object="${procedimento}" method="POST">
+                    <div th:each="c : ${convenio}">
+                        <h3 style="display: inline; margin-left: 10px;"> <strong th:text="${c.nome + ' | ' }">   </strong> Cadastro Procedimento</h3>
+                        <a class="btn btn-outline-secondary float-right" th:href="@{/convenios/editar/{id} (id=${c.id}) }"> <i class="fas fa-chevron-left"></i> Voltar</a>
+                        <button type="submit" class="btn btn-outline-primary float-right mr-2">Salvar</button>
+                        <br>
                     </div>
-                    <div class="card ajustarCard">
+                    <div class="card" style="margin-top: 25px; padding: 0px;">
                         <div class="card-body">
+                            <div class="form-row ">
+                                <div class="form-group col-md-4 " style="margin: auto;">
 
-                            <div class="form-group col-md-4 ajustarTexto">
+                                    <br>
+                                    <label for="nome"> Nome </label>
+                                    <input type="text" class="form-control" id="nome" placeholder="Nome do Procedimento" autofocus="autofocus" th:field="*{descricao}" onkeyup="maiuscula(this)" maxlength="30" required>
 
-                                <label for="nome"> Nome</label>
-                                <input type="text" class="form-control" id="nome" autofocus="autofocus" th:field="*{nome}" onkeyup="maiuscula(this)" disabled>
+                                    <br>
+                                    <label for="nome"> Valor </label>
+                                    <input type="text" class="form-control" id="valor" name="valor" placeholder="Valor do Procedimento" th:field="*{valor}" required>
 
-                                <div class="invalid-feedback"></div>
+                                    <br>
+
+                                    <select id="convenio_id" class="form-control" th:field="*{convenio.id}" hidden>
+                                        <option th:each="c : ${convenio}" th:value="${c.id}" th:text="${c.nome}"></option>
+                                    </select>
+
+                                    <br>
+                                    <br>
+
+                                    <input type="hidden" id="id" th:field="*{id}" />
+
+                                </div>
+
                             </div>
-
-                            <div class="form-group col-md-4 ajustarTexto">
-
-                              
-                                <input type="hidden" id="convenio_id" th:field="*{convenio}" />
-                                <input type="hidden" id="id" th:field="*{id}" />
-                                <div class="invalid-feedback"></div>
-
-                            </div>
-
                         </div>
+
                     </div>
                 </form>
             </div>
         </div>
     </section>
-
 </body>
 
 </html>

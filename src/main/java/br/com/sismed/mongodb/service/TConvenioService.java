@@ -1,6 +1,6 @@
 package br.com.sismed.mongodb.service;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.repository.TConvenioRepository;
 
@@ -22,40 +21,26 @@ public class TConvenioService {
 	private TConvenioRepository repository;
 	
 	@Autowired
-	MongoOperations template;
+	private MongoOperations mongo;
 	
-	/*@Transactional(readOnly=true)
+	@Transactional(readOnly=true)
 	public List<TConvenio> listarTodos(String id){
-		return repository.findByConvenio_id(id);
-	}*/
+		return repository.findByConvenio(id);
+	}
 	
 	@Transactional(readOnly=true)
 	public Optional<TConvenio> buscarPorId(String id) {
 		return repository.findById(id);
 	}
 	
+	@Transactional(readOnly=false)
+	public void salvar(TConvenio tconvenio) {
+		repository.save(tconvenio);
+	}
 	
 	@Transactional(readOnly=false)
 	public void excluir(String id) {
 		repository.deleteById(id);
 	}
-	
-	@Transactional(readOnly=false)
-	public void salvar(TConvenio tconvenio, String id) {
-		Convenio e = template.findOne(new Query(Criteria.where("id").is(id)), Convenio.class);
-		if (e != null) {
-			e.getTipos().add(tconvenio);
-			template.save(e);
-		}
-		
-		
-	}
-
-
-	public List<TConvenio> listarTodos(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 }

@@ -33,8 +33,6 @@ public class Convenio extends AbstractEntity{
 	private DadosBancarios dadosb;
 	
 	
-	private List<TConvenio> tipos;
-	
 	
 	/*Metodos get's e set's */
 
@@ -43,15 +41,6 @@ public class Convenio extends AbstractEntity{
 		return nome;
 	}
 	
-	
-	public List<TConvenio> getTipos() {
-		return tipos;
-	}
-
-
-	public void setTipos(List<TConvenio> tipos) {
-		this.tipos = tipos;
-	}
 
 
 	public void setNome(String nome) {
