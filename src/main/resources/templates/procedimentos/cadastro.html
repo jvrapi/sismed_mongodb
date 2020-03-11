@@ -80,15 +80,14 @@
                                     <input type="text" class="form-control" id="valor" name="valor" placeholder="Valor do Procedimento" th:field="*{valor}" required>
 
                                     <br>
+                                    <input type="text" th:value="${convenio.id}" th:name="convenio">
 
-                                    <select id="convenio_id" class="form-control" th:field="*{convenio.id}" hidden>
-                                        <option th:each="c : ${convenio}" th:value="${c.id}" th:text="${c.nome}"></option>
-                                    </select>
+                                    
 
                                     <br>
                                     <br>
 
-                                    <input type="hidden" id="id" th:field="*{id}" />
+                                   
 
                                 </div>
 
