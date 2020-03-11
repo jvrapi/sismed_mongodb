@@ -81,7 +81,7 @@
                                     <a th:text="${p.matricula}"></a>
                                 </td>
                                 <td style="width: 350px;">
-                                	<!-- th:href="@{/pacientes/editar/{id}/{cid} (id=${p.id}, cid=${p.tipo_convenio.convenio.id}) }" --> <a th:text="${p.nome}"></a>
+                                	<a th:href="@{/pacientes/editar/{id} (id=${p.id}) }" th:text="${p.nome}"></a>
                                 </td>
                                 <td>
                                     <a th:text="${p.rg}"></a>
@@ -89,7 +89,7 @@
                                 <td>
                                     <a th:text="${p.cpf}"></a>
                                 </td>
-                                <td> <a th:text="${p.tipo_convenio.convenio.nome}" /></a>
+                                <td> <a th:text="${p.convenio.nome}" /></a>
                                 </td>
                                 <td> <a th:text="${p.tipo_convenio.nome}" /></a>
                                 </td>

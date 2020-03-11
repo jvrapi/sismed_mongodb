@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,14 @@ public class PacienteService {
 	@Transactional(readOnly = true)
 	public Paciente lastPaciente() {
 		return pRepository.findTopByOrderByIdDesc();
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<Paciente> buscarPorId(String id) {
+		return pRepository.findById(id);
+	}
+	
+	public void excluir(String id) {
+		pRepository.deleteById(id);
 	}
 }
