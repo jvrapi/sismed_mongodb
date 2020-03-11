@@ -20,49 +20,46 @@ public class FuncionarioController {
 
 	@Autowired
 	private FuncionarioService service;
-	
+
 	@GetMapping("/listar")
-	public String listarTodos(ModelMap model){
+	public String listarTodos(ModelMap model) {
 		List<Funcionario> listFuncionario = service.buscarTodos();
 		model.addAttribute("funcionario", listFuncionario);
 		return "funcionario/lista";
 	}
-	
+
 	@GetMapping("/cadastrar")
 	public String cadastrar(Funcionario funcionario) {
 		return "funcionario/cadastro";
 	}
-	
+
 	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario) {
-		
+
 		Funcionario func = service.ultimoRegistro();
-		
+
 		Long matricula;
-		
-		if(func != null) {
-			matricula = func.getMatricula()+1;
-		}
-		else {
+
+		if (func != null) {
+			matricula = func.getMatricula() + 1;
+		} else {
 			matricula = 1L;
 		}
-		
+
 		funcionario.setMatricula(matricula);
-		
+
 		service.salvar(funcionario);
 		return "redirect:/funcionario/listar";
-		
+
 	}
-	
+
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
-        Optional<Funcionario> func = service.buscarporId(id);
-        
-        //service.findOne(id).ifPresent(o -> model.addAttribute("id", o));
-        
-        System.out.println(func.get().getCrm());
-        model.addAttribute("funcionario", func);
+
+		// service.findOne(id).ifPresent(o -> model.addAttribute("id", o));
+
+		model.addAttribute("funcionario", service.buscarporId(id).get());
 		return "funcionario/editar";
-		
+
 	}
 }
