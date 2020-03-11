@@ -44,5 +44,9 @@ public class FuncionarioService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public void excluir(String id) {
+		repository.deleteById(id);
+	}
 
 }
