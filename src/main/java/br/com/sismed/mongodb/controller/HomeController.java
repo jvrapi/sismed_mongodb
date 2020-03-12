@@ -1,16 +1,39 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
-public class HomeController {
+import br.com.sismed.mongodb.domain.Funcionario;
+import br.com.sismed.mongodb.service.FuncionarioService;
 
+@Controller
+public class HomeController{
+	@Autowired
+	private FuncionarioService funcionarioService;
 	@GetMapping({ "/", "/home" })
-	public String paginaInicial() {
+	public String paginaInicial(@AuthenticationPrincipal User user, ModelMap model) {
+		Funcionario funcionario = funcionarioService.buscarPorCpf(user.getUsername());
+		String pattern = "\\S+";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(funcionario.getNome());
+
+		if (m.find()) {
+	         // escreva o grupo encontrado
+			model.addAttribute("usuario",  m.group(0));
+	         
+	      } else {
+	         // mensagem de erro
+	    	  model.addAttribute("usuario",  funcionario.getNome());
+	      }
 		return "home";
 	}
 

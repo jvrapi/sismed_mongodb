@@ -22,7 +22,7 @@ import br.com.sismed.mongodb.service.TConvenioService;
 
 @Controller
 @RequestMapping("/pacientes")
-public class PacienteController {
+public class PacienteController extends AbstractController{
 	
 	@Autowired
 	private PacienteService pService;

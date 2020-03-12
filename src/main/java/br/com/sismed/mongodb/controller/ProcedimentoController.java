@@ -18,7 +18,7 @@ import br.com.sismed.mongodb.service.ProcedimentoService;
 
 @Controller
 @RequestMapping("/procedimentos")
-public class ProcedimentoController {
+public class ProcedimentoController extends AbstractController{
 
 	@Autowired
 	private ConvenioService convenioService;

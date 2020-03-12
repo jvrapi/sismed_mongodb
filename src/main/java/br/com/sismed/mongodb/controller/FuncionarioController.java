@@ -17,7 +17,7 @@ import br.com.sismed.mongodb.service.FuncionarioService;
 
 @Controller
 @RequestMapping("/funcionario")
-public class FuncionarioController {
+public class FuncionarioController extends AbstractController{
 
 	@Autowired
 	private FuncionarioService service;

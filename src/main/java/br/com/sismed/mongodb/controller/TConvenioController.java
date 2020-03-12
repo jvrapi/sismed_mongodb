@@ -20,7 +20,7 @@ import br.com.sismed.mongodb.service.TConvenioService;
 
 @RequestMapping("/tconvenios")
 @Controller
-public class TConvenioController {
+public class TConvenioController extends AbstractController{
 
 	@Autowired
 	private ConvenioService service;

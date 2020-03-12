@@ -16,7 +16,7 @@ import br.com.sismed.mongodb.service.ConvenioService;
 
 @Controller
 @RequestMapping("/convenios")
-public class ConvenioController {
+public class ConvenioController extends AbstractController{
 
 	@Autowired
 	private ConvenioService service;
