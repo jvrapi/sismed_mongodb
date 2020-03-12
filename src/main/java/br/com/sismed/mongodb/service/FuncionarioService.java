@@ -6,13 +6,19 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.repository.FuncionarioRepository;
 
 @Service
-public class FuncionarioService {
+public class FuncionarioService implements UserDetailsService{
 
 	@Autowired
 	private FuncionarioRepository repository;
@@ -40,13 +46,23 @@ public class FuncionarioService {
 		return repository.findById(id);
 	}
 
-	public Optional<Funcionario> findOne(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Funcionario buscarPorCpf(String cpf) {
+		return repository.findBycpf(cpf);
 	}
 	
 	public void excluir(String id) {
 		repository.deleteById(id);
+	}
+
+	@Override @Transactional(readOnly = true)
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Funcionario funcionario = buscarPorCpf(username);
+		return new User(
+				funcionario.getCpf(),
+				funcionario.getSenha(),
+				AuthorityUtils.createAuthorityList(funcionario.getPerfil().getDesc())
+				
+			);
 	}
 
 }

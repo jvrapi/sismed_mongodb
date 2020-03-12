@@ -31,4 +31,6 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Stri
 	
 	Funcionario findTopByOrderByIdDesc();
 	
+	Funcionario findBycpf(String cpf);
+	
 }

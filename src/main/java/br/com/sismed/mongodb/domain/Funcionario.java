@@ -55,7 +55,30 @@ public class Funcionario extends AbstractEntity{
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
+	private String senha;
 	
+	private Perfil perfil;
+	
+	
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	
+
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
 	public Long getMatricula() {
 		return matricula;
 	}
