@@ -59,8 +59,6 @@ public class Paciente extends AbstractEntity{
 	private TConvenio tipo_convenio;
 	
 	private Endereco endereco;
-	
-	private Convenio convenio;
 
 	public Long getMatricula() {
 		return matricula;
@@ -244,14 +242,6 @@ public class Paciente extends AbstractEntity{
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
-	}
-	
-	public Convenio getConvenio() {
-		return convenio;
-	}
-
-	public void setConvenio(Convenio convenio) {
-		this.convenio = convenio;
 	}
 
 }

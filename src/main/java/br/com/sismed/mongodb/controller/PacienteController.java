@@ -36,10 +36,6 @@ public class PacienteController extends AbstractController{
 	@GetMapping("/listar")
 	public String buscarTodos(ModelMap model) {
 		List<Paciente> paciente = pService.buscarTodos();
-		for(int i = 0; i < paciente.size(); i++) {
-			Convenio convenio = cService.buscarPorId(paciente.get(i).getTipo_convenio().getConvenio()).get();
-			paciente.get(i).setConvenio(convenio);
-		}
 		model.addAttribute("paciente", paciente);
 		return "/pacientes/lista";
 	}
@@ -53,6 +49,7 @@ public class PacienteController extends AbstractController{
 	@PostMapping("/salvar")
 	public String salvar(Paciente paciente, RedirectAttributes attr) {
 		pService.salvar(paciente);
+		System.out.println(paciente.getTipo_convenio().getConvenio().getNome());
 		attr.addFlashAttribute("sucesso", "Paciente cadastrado com sucesso");
 		return "redirect:/pacientes/listar";
 	}
@@ -60,10 +57,8 @@ public class PacienteController extends AbstractController{
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		Paciente paciente = pService.buscarPorId(id).get();
-		Convenio convenio = cService.buscarPorId(paciente.getTipo_convenio().getConvenio()).get();
-		paciente.setConvenio(convenio);
 		model.addAttribute("paciente", paciente);
-		model.addAttribute("tipoconvenio", tcService.listarTodos(convenio.getId()));
+		model.addAttribute("tipoconvenio", tcService.listarTodos(paciente.getTipo_convenio().getConvenio().getId()));
 		return "pacientes/editar";		
 	}
 	
