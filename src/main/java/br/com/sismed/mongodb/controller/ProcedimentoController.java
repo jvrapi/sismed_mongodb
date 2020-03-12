@@ -28,15 +28,9 @@ public class ProcedimentoController {
 
 	@GetMapping("/listar/{id}")
 	public String listarProcedimentos(@PathVariable("id") String id, ModelMap model) {
-		System.out.println(id);
 		Convenio convenio = convenioService.buscarPorId(id).get();
-		try {
 		List<Procedimento> procedimentos = procedimentoService.listarTodos(id);
 		model.addAttribute("procedimento", procedimentos);
-		}catch(NullPointerException a) {
-			a.printStackTrace();
-		}
-		
 		model.addAttribute("convenio", convenio);
 		return "procedimentos/lista";
 	}
@@ -53,5 +47,28 @@ public class ProcedimentoController {
 		String id = procedimento.getConvenio();
 		procedimentoService.salvar(procedimento);
 		return "redirect:/procedimentos/listar/"+ id;
+	}
+	
+	@GetMapping("/editar/{id}")
+	public String abrirEdicao(@PathVariable String id, ModelMap model) {
+		Procedimento procedimento = procedimentoService.buscarPorId(id).get();
+		Convenio convenio = convenioService.buscarPorId(procedimento.getConvenio()).get();
+		model.addAttribute("procedimento", procedimento);
+		model.addAttribute("convenio", convenio);
+		return "procedimentos/editar";
+	}
+	
+	@PostMapping("/atualizar")
+	public String atualizarProcedimento(Procedimento procedimento, RedirectAttributes attr) {
+		String convenio = procedimento.getConvenio();		procedimentoService.salvar(procedimento);
+		attr.addFlashAttribute("sucesso","Procedimento alterado com sucesso");
+		return"redirect:/procedimentos/listar/" + convenio;
+	}
+	
+	@GetMapping("/excluir/{id}/{convenio}")
+	public String excluirProcedimento(@PathVariable("id") String procedimentoId, @PathVariable("convenio") String convenioId, RedirectAttributes attr) {
+		procedimentoService.deletar(procedimentoId);
+		attr.addFlashAttribute("sucesso", "Procedimento excluído com sucesso");
+		return"redirect:/procedimentos/listar/" + convenioId;
 	}
 }

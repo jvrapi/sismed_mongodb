@@ -53,11 +53,11 @@
 
             <div class="container " id="cadastroTipoConvenio">
 
-                <form th:action=" @{/procedimentos/editar } " th:object="${procedimento}" method="POST">
+                <form th:action=" @{/procedimentos/atualizar} " th:object="${procedimento}" method="POST">
 
                     <div id="div_botao">
-                        <h4 class="titulo detalhes"><strong th:text="${procedimento.convenio.nome} + ' | ' "> </strong> Edição de Tipo</h4>
-                        <a class="btn btn-outline-secondary float-right ml-2" th:href="@{/procedimentos/listar/{id} (id=${procedimento.convenio.id}) }"> <i class="fas fa-chevron-left"> </i> Voltar</a>
+                        <h4 class="titulo detalhes"><strong th:text="${convenio.nome} + ' | ' "> </strong> Edição de Tipo</h4>
+                        <a class="btn btn-outline-secondary float-right ml-2" th:href="@{/procedimentos/listar/{id} (id=${convenio.id}) }"> <i class="fas fa-chevron-left"> </i> Voltar</a>
                         <button th:id="${procedimento.id}" type="button" class="btn btn-outline-danger classid float-right" data-toggle="modal" data-target="#myModal">Excluir</button>
                         <button class="btn btn-outline-primary float-right mr-2" id="btn_editar" style="margin-left: 10px;" type="button" onclick="executar(this)">Editar</button>
                     </div>
@@ -78,10 +78,10 @@
                                 <div class="invalid-feedback"></div>
                             </div>
 
-                            <input type="hidden" class="convenioid" th:id="${procedimento.convenio.id}" />
+                            
                             <input type="hidden" id="id" th:field="*{id}" />
 
-                            <input type="hidden" id="convenio_id" th:field="*{convenio.id}" />
+                            <input type="hidden" id="convenio_id" th:field="*{convenio}" />
 
                         </div>
 

@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class ProcedimentoService {
 
 	@Transactional(readOnly = false)
 	public void salvar(Procedimento procedimento) {
-		repository.insert(procedimento);
+		repository.save(procedimento);
 	}
 
 	@Transactional(readOnly=true)
@@ -28,6 +29,10 @@ public class ProcedimentoService {
 	@Transactional(readOnly = false)
 	public void deletar(String id) {
 		repository.deleteById(id);
+	}
+
+	public Optional<Procedimento> buscarPorId(String id) {
+		return repository.findById(id);
 	}
 
 }
