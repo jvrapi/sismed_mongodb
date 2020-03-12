@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Funcionario;
+import br.com.sismed.mongodb.domain.Login;
 import br.com.sismed.mongodb.service.FuncionarioService;
 
 @Controller
@@ -38,7 +40,11 @@ public class FuncionarioController extends AbstractController{
 	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
 
 		Funcionario func = service.ultimoRegistro();
-
+		Login l = new Login();
+		l.setSenha(new BCryptPasswordEncoder().encode(funcionario.getLogin().getSenha()));
+		
+		funcionario.setLogin(l);
+		
 		Long matricula;
 
 		if (func != null) {

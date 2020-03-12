@@ -57,9 +57,10 @@ public class FuncionarioService implements UserDetailsService{
 	@Override @Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Funcionario funcionario = buscarPorCpf(username);
+		
 		return new User(
 				funcionario.getCpf(),
-				funcionario.getSenha(),
+				funcionario.getLogin().getSenha(),
 				AuthorityUtils.createAuthorityList(funcionario.getPerfil().getDesc())
 				
 			);

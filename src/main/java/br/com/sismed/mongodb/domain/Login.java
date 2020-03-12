@@ -1,12 +1,9 @@
 package br.com.sismed.mongodb.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection="sismed_login")
 public class Login {
 
 	private String senha;
-	private Perfil perfil;
+	private String codigo_verificar;
 
 	public String getSenha() {
 		return senha;
@@ -16,12 +13,12 @@ public class Login {
 		this.senha = senha;
 	}
 
-	public Perfil getPerfil() {
-		return perfil;
+	public String getCodigo_verificar() {
+		return codigo_verificar;
 	}
 
-	public void setPerfil(Perfil perfil) {
-		this.perfil = perfil;
+	public void setCodigo_verificar(String codigo_verificar) {
+		this.codigo_verificar = codigo_verificar;
 	}
 
 }

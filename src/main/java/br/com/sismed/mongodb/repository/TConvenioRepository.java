@@ -11,5 +11,5 @@ import br.com.sismed.mongodb.domain.TConvenio;
 public interface TConvenioRepository extends MongoRepository<TConvenio,String>{
 
 	
-	public List<TConvenio> findByConvenio(String id);
+	public List<TConvenio> findByConvenio_id(String id);
 }

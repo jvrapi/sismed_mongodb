@@ -7,69 +7,65 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Document(collection = "sismed_funcionario")
-public class Funcionario extends AbstractEntity{
+public class Funcionario extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long matricula;
-	
+
 	private String nome;
-	
+
 	private String cpf;
-	
+
 	private String rg;
-	
+
 	private String orgao_emissor;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_emissao;
-	
+
 	private Integer crm;
-	
+
 	private String especialidade;
-	
+
 	private String telefone_fixo;
-	
+
 	private String celular;
-	
+
 	private String sexo;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_nascimento;
-	
+
 	private String email;
-	
+
 	private String estado_civil;
-	
+
 	private String escolaridade;
-	
+
 	private Endereco endereco;
-	
+
 	private String naturalidade;
-	
+
 	private String nacionalidade;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_inicio;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
-	private String senha;
-	
 	private Perfil perfil;
-	
-	
 
-	public String getSenha() {
-		return senha;
+	private Login login;
+
+	public Login getLogin() {
+		return login;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
+	public void setLogin(Login login) {
+		this.login = login;
 	}
-
-	
 
 	public Perfil getPerfil() {
 		return perfil;

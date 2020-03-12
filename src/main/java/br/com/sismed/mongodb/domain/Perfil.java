@@ -1,9 +1,8 @@
 package br.com.sismed.mongodb.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document(collection = "sismed_perfil")
+
 public class Perfil extends AbstractEntity {
 
 	

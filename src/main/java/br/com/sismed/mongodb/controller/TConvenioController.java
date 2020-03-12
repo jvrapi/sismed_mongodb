@@ -3,6 +3,7 @@ package br.com.sismed.mongodb.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ import br.com.sismed.mongodb.service.TConvenioService;
 
 @RequestMapping("/tconvenios")
 @Controller
-public class TConvenioController extends AbstractController{
+public class TConvenioController {
 
 	@Autowired
 	private ConvenioService service;
@@ -37,10 +38,10 @@ public class TConvenioController extends AbstractController{
 	
 	@PostMapping("/salvar")
 	public String salvarTipo(TConvenio tconvenio, RedirectAttributes attr) {
-		String id = tconvenio.getConvenio();
+		String id = tconvenio.getConvenio().getId();
 		tservice.salvar(tconvenio);
 		attr.addFlashAttribute("sucesso", "Tipo de Convenio cadastrado com sucesso");
-		return "redirect:/tconvenios/listar/"+id;
+		return "redirect:/tconvenios/cadastrar/"+id;
 	}
 	
 	@GetMapping("/listar/{id}")
@@ -55,8 +56,6 @@ public class TConvenioController extends AbstractController{
 	@GetMapping("/editar/{id}")
 	public String editarTipo(@PathVariable("id") String id, ModelMap model) {
 		TConvenio tc = tservice.buscarPorId(id).get();
-		Convenio convenio = service.buscarPorId(tc.getConvenio()).get();
-		model.addAttribute("convenio", convenio);
 		model.addAttribute("tconvenio", tc);
 		return "tconvenio/editar";
 	}
@@ -70,9 +69,9 @@ public class TConvenioController extends AbstractController{
 	}
 	
 	@GetMapping("/excluir/{id}/{convenio_id}")
-	public String excluirTipo(@PathVariable("id") String id, @PathVariable("convenio_id") String convenio_id, RedirectAttributes attr) {
+	public String excluirTipo(@PathVariable String id, @PathVariable String convenio_id, RedirectAttributes attr) {
 		tservice.excluir(id);
-		attr.addFlashAttribute("sucesso", "Tipo de Convenio excluido com sucesso");
+		attr.addFlashAttribute("success", "Tipo de Convenio excluido com sucesso");
 		return"redirect:/tconvenios/listar/" + convenio_id;
 	}
 }

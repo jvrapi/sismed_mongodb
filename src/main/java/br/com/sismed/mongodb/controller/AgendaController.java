@@ -49,10 +49,10 @@ public class AgendaController extends AbstractController{
 	@GetMapping("/agendar/{id}")
 	public String abrirPaginaAgendamento(@PathVariable("id") String id, ModelMap model, Agenda agendar) {
 		Paciente paciente = pacienteService.buscarPorId(id).get();
-		Convenio convenio = convenioService.buscarPorId(paciente.getTipo_convenio().getConvenio()).get();
+		//Convenio convenio = convenioService.buscarPorId(paciente.getTipo_convenio().getConvenio()).get();
 		model.addAttribute("paciente", paciente);
 		model.addAttribute("funcionario", funcionarioService.buscarTodos());
-		model.addAttribute("convenio", convenio);
+		//model.addAttribute("convenio", convenio);
 	
 		return "agenda/agendarPacienteCadastrado";
 	}
