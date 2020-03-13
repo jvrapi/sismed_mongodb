@@ -104,7 +104,9 @@ public class FuncionarioController extends AbstractController{
 			listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
 		}
 		model.addAttribute("funcionario", funcionario);
+		// modal de cadastro
 		model.addAttribute("allConvenios", cService.buscarTodos());
+		//modal de exclusão
 		model.addAttribute("convenios", listConvenio);
 		return "funcionario/editar";
 	}
@@ -130,10 +132,16 @@ public class FuncionarioController extends AbstractController{
 		return tcService.listarTodos(id);
 	}
 	
+	/*@ResponseBody
+	@GetMapping("/listarTiposPorConvenioFunc/{id}/{funcId}")
+	public List<TConvenio> listarTiposPorConvenioFunc(@PathVariable("id") String convId, @PathVariable("funcId") String funcId) {
+		Funcionario funcionario = service.buscarporId(funcId).get();
+	}*/
+	
 	@PostMapping("/salvarTConv")
 	public String salvarTConv(@RequestParam("tconvenio") List<TConvenio> tconvenios, @RequestParam("idModal") String id) {
 		Funcionario funcionario = service.buscarporId(id).get();
-		funcionario.setTconvenio(tconvenios);
+		funcionario.getTconvenio().addAll(tconvenios);
 		service.salvar(funcionario);
 		return "redirect:/funcionario/editar/" + funcionario.getId();
 	}
