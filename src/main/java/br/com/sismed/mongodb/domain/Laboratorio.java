@@ -24,8 +24,6 @@ public class Laboratorio extends AbstractEntity{
 	
     Set<LabTConv> lab;
 	
-	
-
 	public String getCnpj() {
 		return cnpj;
 	}

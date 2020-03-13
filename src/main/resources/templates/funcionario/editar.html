@@ -388,7 +388,7 @@
 					</div>
 					<div class="modal-body">
 						<form
-							th:action="@{/funcionario/salvarTConv/{FuncId} (FuncId=${id}) }"
+							th:action="@{/funcionario/salvarTConv}"
 							method="POST" id="formCadastroConvFunc">
 							<div class="form-row">
 								<div class="form-group col-md-12">
@@ -403,7 +403,7 @@
 										id="allconvenio_id" class="form-control tamanho-fonte"
 										required>
 										<option value="" selected hidden>Selecione</option>
-										<option th:each="c : ${allconvenios}" th:value="${c.id}"
+										<option th:each="c : ${allConvenios}" th:value="${c.id}"
 											th:text="${c.nome}"></option>
 									</select>
 								</div>
@@ -416,7 +416,7 @@
 								</div>
 							</div>
 
-							<input type="hidden" id="recipient-id2" th:field=*{id}>
+							<input type="hidden" id="idModal" name="idModal" th:value=${id}>
 
 							<div class="modal-footer">
 								<button type="button" class="btn btn-outline-secondary"

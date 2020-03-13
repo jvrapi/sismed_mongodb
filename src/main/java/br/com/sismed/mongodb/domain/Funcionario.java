@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -55,6 +56,8 @@ public class Funcionario extends AbstractEntity {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
+	private List<TConvenio> tconvenio;
+	
 	private Perfil perfil;
 
 	private Login login;
@@ -234,4 +237,13 @@ public class Funcionario extends AbstractEntity {
 	public void setData_termino(LocalDate data_termino) {
 		this.data_termino = data_termino;
 	}
+
+	public List<TConvenio> getTconvenio() {
+		return tconvenio;
+	}
+
+	public void setTconvenio(List<TConvenio> tconvenio) {
+		this.tconvenio = tconvenio;
+	}
+	
 }

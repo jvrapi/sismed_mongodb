@@ -1,7 +1,7 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.Login;
+import br.com.sismed.mongodb.domain.TConvenio;
+import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
+import br.com.sismed.mongodb.service.TConvenioService;
 
 @Controller
 @RequestMapping("/funcionario")
@@ -23,12 +28,39 @@ public class FuncionarioController extends AbstractController{
 
 	@Autowired
 	private FuncionarioService service;
+	
+	@Autowired
+	private ConvenioService cService;
 
+	@Autowired
+	private TConvenioService tcService;
+	
 	@GetMapping("/listar")
 	public String listarTodos(ModelMap model) {
 		List<Funcionario> listFuncionario = service.buscarTodos();
 		model.addAttribute("funcionario", listFuncionario);
 		return "funcionario/lista";
+	}
+	
+	@GetMapping("/listarMedicos")
+	public List<Funcionario> listarTodos1(ModelMap model) {
+		List<Funcionario> listaMedico = service.buscarMedicos();
+		//model.addAttribute("funcionario", listaMedico);
+		return listaMedico;
+	}
+	
+	@GetMapping("/listarFuncTiposConvenios")
+	public String listarFuncTipoConvenio(ModelMap model) {
+		List<Funcionario> listaTipoConvenio = service.mostrarTipoConvenios();
+		model.addAttribute("funcionario", listaTipoConvenio);
+		return "funcionario/listarFuncTipoConvenios";
+	}
+	
+	@GetMapping("/listarFuncConvenios")
+	public String listarFuncConvenio(ModelMap model) {
+		List<Funcionario> listaConvenio = service.mostrarConvenios();
+		model.addAttribute("funcionario", listaConvenio);
+		return "funcionario/listarConvenios";
 	}
 
 	@GetMapping("/cadastrar")
@@ -66,7 +98,7 @@ public class FuncionarioController extends AbstractController{
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		model.addAttribute("funcionario", service.buscarporId(id).get());
-		
+		model.addAttribute("allConvenios", cService.buscarTodos());
 		return "funcionario/editar";
 	}
 	
@@ -84,4 +116,19 @@ public class FuncionarioController extends AbstractController{
 		attr.addFlashAttribute("sucesso", "Funcionario(a) excluído(a) com sucesso");
 		return "redirect:/funcionario/listar";
 	}
+	
+	@ResponseBody
+	@GetMapping("/listarTiposPorConvenio/{id}")
+	public List<TConvenio> listarTiposPorConvenio(@PathVariable("id") String id) {
+		return tcService.listarTodos(id);
+	}
+	
+	@PostMapping("/salvarTConv")
+	public String salvarTConv(@RequestParam("tconvenio") List<TConvenio> tconvenios, @RequestParam("idModal") String id) {
+		Funcionario funcionario = service.buscarporId(id).get();
+		funcionario.setTconvenio(tconvenios);
+		service.salvar(funcionario);
+		return "redirect:/funcionario/editar/" + funcionario.getId();
+	}
+	
 }

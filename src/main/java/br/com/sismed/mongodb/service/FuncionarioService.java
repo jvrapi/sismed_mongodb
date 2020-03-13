@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.sismed.mongodb.domain.FuncTConv;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.repository.FuncionarioRepository;
 
@@ -24,6 +25,21 @@ public class FuncionarioService implements UserDetailsService{
 	private FuncionarioRepository repository;
 	
 	public List<Funcionario> buscarTodos() {
+		return repository.findAll();
+	}
+	
+	public List<Funcionario> buscarMedicos(){
+		return repository.listarPorCrm();
+	}
+	
+	//Convenios aceitos por cada funcionário
+	//Duas listas: tipo de convenio aceito por cada funcionario e convenios aceitos por cada funcionario
+	
+	public List<Funcionario> mostrarTipoConvenios(){
+		return repository.findAll();
+	}
+	
+	public List<Funcionario> mostrarConvenios(){
 		return repository.findAll();
 	}
 

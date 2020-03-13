@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sismed.mongodb.domain.TConvenio;
+import br.com.sismed.mongodb.repository.FuncionarioRepository;
 import br.com.sismed.mongodb.repository.TConvenioRepository;
 
 @Service
@@ -15,6 +16,9 @@ public class TConvenioService {
 
 	@Autowired
 	private TConvenioRepository repository;
+	
+	@Autowired
+	private FuncionarioRepository fRepository;
 	
 	
 	@Transactional(readOnly=true)

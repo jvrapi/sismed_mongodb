@@ -33,4 +33,7 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Stri
 	
 	Funcionario findBycpf(String cpf);
 	
+	@Query(value="{ 'crm':{ $ne: null } }")
+	List<Funcionario> listarPorCrm();
+	
 }
