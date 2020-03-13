@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.Login;
 import br.com.sismed.mongodb.domain.TConvenio;
@@ -97,8 +98,14 @@ public class FuncionarioController extends AbstractController{
 
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
-		model.addAttribute("funcionario", service.buscarporId(id).get());
+		Funcionario funcionario = service.buscarporId(id).get();
+		List<Convenio> listConvenio = new ArrayList<>();
+		for(int i = 0; i < funcionario.getTconvenio().size(); i++) {
+			listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+		}
+		model.addAttribute("funcionario", funcionario);
 		model.addAttribute("allConvenios", cService.buscarTodos());
+		model.addAttribute("convenios", listConvenio);
 		return "funcionario/editar";
 	}
 	
@@ -129,6 +136,14 @@ public class FuncionarioController extends AbstractController{
 		funcionario.setTconvenio(tconvenios);
 		service.salvar(funcionario);
 		return "redirect:/funcionario/editar/" + funcionario.getId();
+	}
+	
+	@PostMapping("/excluirTConv")
+	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") List<TConvenio> tconvenios) {
+		for (TConvenio tconvenio : tconvenios) {
+			service.apagarTConv(funcId, tconvenio.getId());
+		}
+		return "redirect:/funcionario/editar/" + funcId;
 	}
 	
 }

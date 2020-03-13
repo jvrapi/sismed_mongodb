@@ -82,5 +82,7 @@ public class FuncionarioService implements UserDetailsService{
 			);
 	}
 
-
+	public void apagarTConv(String funcId, String tconvId) {
+		repository.apagarTConv(funcId, tconvId);
+	}
 }

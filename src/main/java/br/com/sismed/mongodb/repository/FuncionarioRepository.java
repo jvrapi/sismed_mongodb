@@ -36,4 +36,7 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Stri
 	@Query(value="{ 'crm':{ $ne: null } }")
 	List<Funcionario> listarPorCrm();
 	
+	@Query(value ="{ update( { '_id' : ?0}, {$pull: {'tconvenio': { '_id': ?1) ) } } } ) }")
+	public void apagarTConv(String funcId, String tconvId);
+	
 }
