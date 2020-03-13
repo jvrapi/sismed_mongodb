@@ -1,5 +1,7 @@
 package br.com.sismed.mongodb.domain;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 public class Login {
 
 	private String senha;
@@ -10,7 +12,7 @@ public class Login {
 	}
 
 	public void setSenha(String senha) {
-		this.senha = senha;
+		this.senha = new BCryptPasswordEncoder().encode(senha);
 	}
 
 	public String getCodigo_verificar() {
