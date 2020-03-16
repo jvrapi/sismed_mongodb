@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Document(collection = "sismed_agenda")
 public class Agenda extends AbstractEntity {
@@ -26,6 +28,7 @@ public class Agenda extends AbstractEntity {
 
 	private Long pagou;
 
+	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data;
 
 	private LocalTime hora;
@@ -110,4 +113,11 @@ public class Agenda extends AbstractEntity {
 		this.hora = hora;
 	}
 
+	public Boolean compararDatas(LocalDate agendamento) {
+
+		LocalDate dataAtual = LocalDate.now();
+
+		return agendamento.isBefore(dataAtual);
+
+	}
 }

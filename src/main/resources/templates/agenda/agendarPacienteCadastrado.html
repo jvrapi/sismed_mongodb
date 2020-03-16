@@ -89,7 +89,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-1">
                                         <label for="prontuario">Prontuário</label>
-                                        <input type="text" class="form-control tamanho-fonte" id="prontuario" th:name="paciente_id" th:value="${p.matricula}" readonly/>
+                                        <input type="text" class="form-control tamanho-fonte" id="prontuario"  th:value="${p.matricula}" disabled/>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="nome">Nome</label>
@@ -121,6 +121,7 @@
                                         <input type="text" class="form-control tamanho-fonte" id="nascimento" th:value="${#temporals.format(p.data_nascimento, 'dd / MM / yyyy')}" disabled autocomplete="off"/>
                                     </div>
                                 </div>
+                                
                             </div>
                             <br>
                             <h5 class="sub_titulo">Médico(a)</h5>
@@ -184,6 +185,7 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" th:value="${paciente.id}" th:name="paciente_id">
                 </form>
 
                 <h5 style="display: inline;">Agendamentos Anteriores</h5>

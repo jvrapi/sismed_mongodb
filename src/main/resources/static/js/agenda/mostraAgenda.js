@@ -8,6 +8,7 @@ $(document).ready(function() {
 	var usuario = $("#usuario").val();
 	
 	if(usuario == 2){
+		
 		$("#funcionario_id").change(function() {
 			var url = "http://localhost:8080/agenda/agendaFuncionario/" + $(this).val();
 			$("#resultsBlock").load(url);
@@ -16,6 +17,7 @@ $(document).ready(function() {
 		});
 	
 	}else{
+		
 		var url = "http://localhost:8080/agenda/agendaMedico";
 			$("#resultsBlock").load(url);
 	}

@@ -7,57 +7,57 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Document(collection = "sismed_paciente")
-public class Paciente extends AbstractEntity{
-	
+public class Paciente extends AbstractEntity {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long matricula;
-	
+
 	private String nome;
-	
+
 	private String cpf;
-	
+
 	private String rg;
-	
+
 	private String orgao_emissor;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_emissao;
-	
+
 	private String telefone_fixo;
-	
+
 	private String telefone_trabalho;
-	
+
 	private String celular;
-	
+
 	private String sexo;
-	
+
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_nascimento;
-	
+
 	private String email;
-	
+
 	private String estado_civil;
-	
+
 	private String escolaridade;
-	
+
 	private String profissao;
-	
+
 	private String recomendacao;
-	
+
 	private String naturalidade;
-	
+
 	private String nacionalidade;
-	
+
 	private String situacao;
 
 	private String carteira_convenio;
 
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate validade;
-	
+
 	private TConvenio tipo_convenio;
-	
+
 	private Endereco endereco;
 
 	public Long getMatricula() {
@@ -242,6 +242,36 @@ public class Paciente extends AbstractEntity{
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+	public int calcularIdade(LocalDate nascimento) {
+		if (getData_nascimento() == null) {
+			return 0;
+		}
+		LocalDate dataAtual = LocalDate.now();
+
+		// Dados da data atual
+		int anoAtual = dataAtual.getYear();
+		int mesAtual = dataAtual.getMonthValue();
+		int diaAtual = dataAtual.getDayOfWeek().ordinal();
+
+		// Dados do paciente
+		int anoPaciente = nascimento.getYear();
+		int mesPaciente = nascimento.getMonthValue();
+		int diaPaciente = nascimento.getDayOfWeek().ordinal();
+
+		int idade = anoAtual - anoPaciente;
+
+		if (mesAtual < mesPaciente) {
+			idade--;
+		} else if (mesAtual == mesPaciente) {
+			if (diaAtual < diaPaciente) {
+				idade--;
+			}
+		}
+
+		return idade;
+
 	}
 
 }

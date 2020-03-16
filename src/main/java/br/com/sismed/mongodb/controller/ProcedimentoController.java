@@ -46,6 +46,7 @@ public class ProcedimentoController extends AbstractController{
 	public String salvarCadastro(Procedimento procedimento, RedirectAttributes attr) {
 		String id = procedimento.getConvenio();
 		procedimentoService.salvar(procedimento);
+		attr.addFlashAttribute("sucesso","Procedimento cadastrado com sucesso");
 		return "redirect:/procedimentos/listar/"+ id;
 	}
 	
