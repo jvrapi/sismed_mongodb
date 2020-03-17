@@ -1,8 +1,8 @@
 $(document).ready(function() {
-	$("#btn_excluir").prop("disabled", true);
+	/*$("#btn_excluir").prop("disabled", true);*/
     $("#convenio_id").change(function() {
-    	$("#btn_excluir").prop("disabled", true);
-        var url = "http://localhost:8080/funcionario/convenio/" + $(this).val() + "/" + $("#id").val();
+    /*	$("#btn_excluir").prop("disabled", true);*/
+        var url = "http://localhost:8080/funcionario/listarTiposPorConvenioFunc/" + $(this).val() + "/" + $("#id").val();
         $.ajax({
             url: url,
             method: "get",

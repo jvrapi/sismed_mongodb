@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import br.com.sismed.mongodb.domain.Funcionario;
 
 @Repository
-public interface FuncionarioRepository extends MongoRepository<Funcionario, String>{
+public interface FuncionarioRepository extends MongoRepository<Funcionario, String> {
 	
 	@Query (value = "{ 'id':?0 }")
 	public List<Funcionario> ListarFuncionarioId(Long id);
@@ -36,7 +36,7 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Stri
 	@Query(value="{ 'crm':{ $ne: null } }")
 	List<Funcionario> listarPorCrm();
 	
-	@Query(value ="{ update( { '_id' : ?0}, {$pull: {'tconvenio': { '_id': ?1) ) } } } ) }")
+	@Query(value ="{update: {'_id': ?0}, {$pull: {'tconvenio': { '_id': ?1} } } }")
 	public void apagarTConv(String funcId, String tconvId);
 	
 }

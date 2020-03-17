@@ -9,7 +9,7 @@ function validaCadastro() {
 	else $("#btn_cadastrar").prop("disabled", true);
 }
 
-function validaExcluir() {
+/*function validaExcluir() {
 	var check;
 	$("#formExcluirConvFunc").find("input:checkbox").each(function() {
     	if($(this).prop("checked") == true) {
@@ -18,4 +18,4 @@ function validaExcluir() {
     });
 	if(check) $("#btn_excluir").prop("disabled", false);
 	else $("#btn_excluir").prop("disabled", true);
-}
+}*/

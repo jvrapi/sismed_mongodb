@@ -443,7 +443,7 @@
 					</div>
 					<div class="modal-body">
 						<form
-							th:action="@{/funcionario/exlcuirTConv/{FuncId} (FuncId=${id}) }"
+							th:action="@{/funcionario/excluirTConv}"
 							method="POST" id="formExcluirConvFunc">
 							<div class="form-row">
 								<div class="form-group col-md-12">
@@ -454,8 +454,8 @@
 							</div>
 							<div class="form-row">
 								<div class="form-group col-md-12">
-									<label for="allconvenio_id">Convênios</label> <select
-										id="convenio_id" class="form-control tamanho-fonte" required>
+									<label for="allconvenio_id">Convênios</label> 
+									<select id="convenio_id" class="form-control tamanho-fonte" name="convenio" required>
 										<option value="" selected hidden>Selecione</option>
 										<option th:each="c : ${convenios}" th:value="${c.id}"
 											th:text="${c.nome}"></option>

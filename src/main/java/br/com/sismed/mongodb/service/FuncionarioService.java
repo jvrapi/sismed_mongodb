@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.sismed.mongodb.domain.FuncTConv;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.repository.FuncionarioRepository;
 
@@ -85,4 +84,5 @@ public class FuncionarioService implements UserDetailsService{
 	public void apagarTConv(String funcId, String tconvId) {
 		repository.apagarTConv(funcId, tconvId);
 	}
+	
 }

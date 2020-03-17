@@ -100,14 +100,21 @@ public class FuncionarioController extends AbstractController{
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		Funcionario funcionario = service.buscarporId(id).get();
 		List<Convenio> listConvenio = new ArrayList<>();
-		for(int i = 0; i < funcionario.getTconvenio().size(); i++) {
-			listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+		if(funcionario.getCrm() != null) {
+			if(funcionario.getTconvenio() != null) {
+				for(int i = 0; i < funcionario.getTconvenio().size(); i++) {
+					listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+				}
+			}
+			model.addAttribute("funcionario", funcionario);
+			// modal de cadastro
+			model.addAttribute("allConvenios", cService.buscarTodos());
+			//modal de exclusão
+			model.addAttribute("convenios", listConvenio);
 		}
-		model.addAttribute("funcionario", funcionario);
-		// modal de cadastro
-		model.addAttribute("allConvenios", cService.buscarTodos());
-		//modal de exclusão
-		model.addAttribute("convenios", listConvenio);
+		else {
+			model.addAttribute("funcionario", funcionario);
+		}
 		return "funcionario/editar";
 	}
 	
@@ -132,26 +139,38 @@ public class FuncionarioController extends AbstractController{
 		return tcService.listarTodos(id);
 	}
 	
-	/*@ResponseBody
-	@GetMapping("/listarTiposPorConvenioFunc/{id}/{funcId}")
-	public List<TConvenio> listarTiposPorConvenioFunc(@PathVariable("id") String convId, @PathVariable("funcId") String funcId) {
+	@ResponseBody
+	@GetMapping("/listarTiposPorConvenioFunc/{convId}/{funcId}")
+	public List<TConvenio> listarTiposPorConvenioFunc(@PathVariable("convId") String convId,  @PathVariable("funcId") String funcId) {
+		List<TConvenio> listTConvenio = new ArrayList<TConvenio>();
 		Funcionario funcionario = service.buscarporId(funcId).get();
-	}*/
+		for (TConvenio tConvenio : funcionario.getTconvenio()) {
+			if(tConvenio.getConvenio().getId().equals(convId)) {
+				listTConvenio.add(tConvenio);
+			}	
+		}
+		return listTConvenio;
+	}
 	
 	@PostMapping("/salvarTConv")
 	public String salvarTConv(@RequestParam("tconvenio") List<TConvenio> tconvenios, @RequestParam("idModal") String id) {
 		Funcionario funcionario = service.buscarporId(id).get();
-		funcionario.getTconvenio().addAll(tconvenios);
+		if(funcionario.getTconvenio() != null) {
+			funcionario.getTconvenio().addAll(tconvenios);
+		}
+		else {
+			funcionario.setTconvenio(tconvenios);
+		}
 		service.salvar(funcionario);
 		return "redirect:/funcionario/editar/" + funcionario.getId();
 	}
 	
 	@PostMapping("/excluirTConv")
-	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") List<TConvenio> tconvenios) {
-		for (TConvenio tconvenio : tconvenios) {
-			service.apagarTConv(funcId, tconvenio.getId());
-		}
+	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") TConvenio tconvenio) {
+		service.apagarTConv(funcId, tconvenio.getId());
 		return "redirect:/funcionario/editar/" + funcId;
 	}
+	
+	
 	
 }
