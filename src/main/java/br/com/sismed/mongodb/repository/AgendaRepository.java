@@ -12,6 +12,8 @@ import br.com.sismed.mongodb.domain.Agenda;
 public interface AgendaRepository extends MongoRepository<Agenda, String>{
 
 	
-	List<Agenda> findByFuncionario_idAndData(String id, LocalDate data);
+	List<Agenda> findByFuncionario_idAndDataOrderByHora(String id, LocalDate data);
+
+	Agenda findTopByPaciente_idOrderByIdDesc(String paciente_id);
 
 }

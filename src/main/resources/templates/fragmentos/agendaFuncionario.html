@@ -26,16 +26,16 @@
                         <tbody th:each="a : ${agendamentos}">
                             <tr class="conteudo text-center" style="font-size: 1em;">
                                 <td>
-                                    <a th:href="@{/pacientes/editar/{id}/{cid} (id=${a.paciente_id.id} , cid=${a.paciente_id.tipo_convenio.convenio.id}) }" title="Clique aqui para abrir o cadastro completo do paciente" th:text="${a.paciente_id.matricula}"> </a>
+                                    <a th:href="@{/pacientes/editar/{id}/{cid} (id=${a.paciente.id} , cid=${a.paciente.tipo_convenio.convenio.id}) }" title="Clique aqui para abrir o cadastro completo do paciente" th:text="${a.paciente.matricula}"> </a>
                                 </td>
                                 <td>
-                                    <a title="Clique aqui para acessar os registros clinicos do paciente" th:href="@{/RegistroClinico/cadastrar/{id} (id = ${a.id})}" th:text="${a.paciente_id.nome}"> </a>
+                                    <a title="Clique aqui para acessar os registros clinicos do paciente" th:href="@{/RegistroClinico/cadastrar/{id} (id = ${a.id})}" th:text="${a.paciente.nome}"> </a>
                                 </td>
                                 <td>
-                                    <a title="Mostrar informações" th:text="${a.paciente_id.telefone_fixo}"></a>
+                                    <a title="Mostrar informações" th:text="${a.paciente.telefone_fixo}"></a>
                                 </td>
                                 <td>
-                                    <a title="Mostrar informações" th:text="${a.paciente_id.celular}"></a>
+                                    <a title="Mostrar informações" th:text="${a.paciente.celular}"></a>
                                 </td>
 								
 								<td th:if="${!a.compararDatas(a.data) }">
@@ -49,7 +49,7 @@
          						
                                 
                                 <td>
-                                    <a title="Mostrar informações" th:text="${a.paciente_id.tipo_convenio.convenio.nome}"></a>
+                                    <a title="Mostrar informações" th:text="${a.paciente.tipo_convenio.convenio.nome}"></a>
                                 </td>
 
                                 <td>
@@ -61,11 +61,11 @@
                                 <td>
                                     <a title="Mostrar informações" th:text="${a.pagou == 1} ? 'S' : 'N' "> </a>
                                 </td>
-                                <td th:if="${a.paciente_id.data_nascimento == null}">
+                                <td th:if="${a.paciente.data_nascimento == null}">
                                     <a title="Mostrar informações" class="classid"> <strong> PENDENTE </strong></a>
                                 </td>
-                                <td th:if="${a.paciente_id.data_nascimento != null}">
-                                    <a th:text="${a.paciente_id.calcularIdade(a.paciente_id.data_nascimento)} + ' ANOS'  "></a>
+                                <td th:if="${a.paciente.data_nascimento != null}">
+                                    <a th:text="${a.paciente.calcularIdade(a.paciente.data_nascimento)} + ' ANOS'  "></a>
                                 </td>
 
                                 <td th:if="${a.observacao != null}">

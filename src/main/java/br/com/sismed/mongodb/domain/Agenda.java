@@ -12,7 +12,7 @@ public class Agenda extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	private Paciente paciente_id;
+	private Paciente paciente;
 
 	private Procedimento procedimento;
 
@@ -33,12 +33,12 @@ public class Agenda extends AbstractEntity {
 
 	private LocalTime hora;
 
-	public Paciente getPaciente_id() {
-		return paciente_id;
+	public Paciente getPaciente() {
+		return paciente;
 	}
 
-	public void setPaciente_id(Paciente paciente_id) {
-		this.paciente_id = paciente_id;
+	public void setPaciente(Paciente paciente) {
+		this.paciente = paciente;
 	}
 
 	public Procedimento getProcedimento() {

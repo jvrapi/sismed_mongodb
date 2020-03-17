@@ -1,10 +1,13 @@
 package br.com.sismed.mongodb.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -31,8 +34,8 @@ import br.com.sismed.mongodb.service.TConvenioService;
 
 @Controller
 @RequestMapping("/agenda")
-public class AgendaController extends AbstractController{
-	
+public class AgendaController extends AbstractController {
+
 	@Autowired
 	private AgendaService service;
 
@@ -51,12 +54,19 @@ public class AgendaController extends AbstractController{
 	@Autowired
 	private FuncionarioService funcionarioService;
 
+	@GetMapping()
+	public ResponseEntity<Agenda> mostrarDados() {
+		String paciente_id = "5e6a79bdebc6e0627990d464";
+		Agenda agendamento = service.ultimoAgendamento(paciente_id);
+		return ResponseEntity.ok().body(agendamento);
+	}
+
 	@GetMapping("/agendamentos")
 	public String abrirAgendaDoDia(ModelMap model, @AuthenticationPrincipal User user) {
 		Funcionario funcionario = funcionarioService.buscarPorCpf(user.getUsername());
 		String perfil = funcionario.getPerfil().getId();
 		String medico_id = funcionario.getId();
-		
+
 		List<Funcionario> medicos = funcionarioService.buscarTodos();
 
 		model.addAttribute("usuario", perfil);
@@ -65,7 +75,7 @@ public class AgendaController extends AbstractController{
 		model.addAttribute("medico_id", medico_id);
 		return "agenda/agendamentos";
 	}
-	
+
 	@GetMapping("/agendar/{id}")
 	public String abrirPaginaAgendamento(@PathVariable("id") String id, ModelMap model, Agenda agendar) {
 		Paciente paciente = pacienteService.buscarPorId(id).get();
@@ -73,40 +83,40 @@ public class AgendaController extends AbstractController{
 		model.addAttribute("paciente", paciente);
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("convenio", convenio);
-	
+
 		return "agenda/agendarPacienteCadastrado";
 	}
-	
+
 	@PostMapping("/salvar1")
 	public String salvar(Agenda agenda, RedirectAttributes attr) {
-		/*if(service.ultimoAgendamento(agenda.getPaciente_id().getId()) == null) {
+		if (service.ultimoAgendamento(agenda.getPaciente().getId()) == null) {
 			agenda.setPrimeira_vez(1L);
 			agenda.setPagou(1L);
 			agenda.setCompareceu(1L);
-		}else {
-		agenda.setPrimeira_vez(0L);
-		agenda.setPagou(1L);
-		agenda.setCompareceu(1L);
-		}*/
-		
+		} else {
+			agenda.setPrimeira_vez(0L);
+			agenda.setPagou(1L);
+			agenda.setCompareceu(1L);
+		}
+
 		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		String dataAgendada = agenda.getData().format(formatador);
 		service.salvar(agenda);
 		attr.addFlashAttribute("success", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
 		return "redirect:/agenda/agendamentos";
 	}
-	
-	/*@GetMapping("/agendaFuncionario/{id}")
-	public String agendaFuncionario(@PathVariable("id") Long id, Agenda agenda, ModelMap model) {
 
-		List<Agenda> agendamentos = service.ListarAgendamentosMedico(id);
-
-		model.addAttribute("agendamentos", agendamentos);
-		for (Agenda a : agendamentos) {
-			model.addAttribute("data", a.getData());
-		}
-		return "fragmentos/agendaFuncionario :: resultsList";
-	}*/
+	/*
+	 * @GetMapping("/agendaFuncionario/{id}") public String
+	 * agendaFuncionario(@PathVariable("id") Long id, Agenda agenda, ModelMap model)
+	 * {
+	 * 
+	 * List<Agenda> agendamentos = service.ListarAgendamentosMedico(id);
+	 * 
+	 * model.addAttribute("agendamentos", agendamentos); for (Agenda a :
+	 * agendamentos) { model.addAttribute("data", a.getData()); } return
+	 * "fragmentos/agendaFuncionario :: resultsList"; }
+	 */
 
 	@GetMapping("/agendaMedico")
 	public String agendaMedico(Agenda agenda, ModelMap model, @AuthenticationPrincipal User user) {
@@ -115,10 +125,10 @@ public class AgendaController extends AbstractController{
 		String perfil = medico.getPerfil().getId();
 		String medico_id = medico.getId();
 		List<Agenda> agendamentos = service.ListarAgendamentosMedico(medico_id);
-		
+
 		for (Agenda a : agendamentos) {
 			model.addAttribute("data", a.getData());
-			
+
 		}
 		model.addAttribute("usuario", perfil);
 		model.addAttribute("funcionario", medico.getNome());
@@ -126,19 +136,82 @@ public class AgendaController extends AbstractController{
 
 		return "fragmentos/agendaFuncionario :: resultsList";
 	}
-	
-	
-	/*Metodos para JS*/
+
+	@GetMapping("buscarAgendamento/{data}/{medico}")
+	public String buscarAgendamento(@PathVariable("data") String data, @PathVariable("medico") String medico,
+			ModelMap model, Agenda agenda) {
+
+		LocalDate dataAgendamento = LocalDate.parse(data);
+		List<Agenda> agendamentos = service.buscarAgendamentos(dataAgendamento, medico);
+		model.addAttribute("agendamentos", agendamentos);
+
+		return "fragmentos/agendaFuncionario :: resultsList";
+	}
+
+	@GetMapping("/editar/{id}")
+	public String preEditar(@PathVariable("id") String id, ModelMap model) {
+		Agenda agendamento = service.buscarPorId(id).get();
+		String funcionario_id = agendamento.getFuncionario().getId();
+		String convenio_id = agendamento.getTipo_convenio().getConvenio().getId();
+
+		Funcionario medico = funcionarioService.buscarporId(funcionario_id).get();
+		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
+
+		String convenioInserido = "";
+		for (TConvenio tc : medico.getTconvenio()) {
+			// listar os convenios aceitos pelo medico
+			if (conveniosAceitos.isEmpty()) {
+				// Primeiro a ser inserido no array
+				convenioInserido = tc.getConvenio().getId();
+				conveniosAceitos.add(tc.getConvenio());
+
+			} else if (!tc.getConvenio().getId().equals(convenioInserido)) {
+				// Verificação para ver se o convenio ja esta dentro do array para que não haja
+				// repetição
+				convenioInserido = tc.getConvenio().getId();
+				conveniosAceitos.add(tc.getConvenio());
+			}
+
+		}
+
+		model.addAttribute("agendamento", agendamento);
+		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
+		model.addAttribute("convenio", conveniosAceitos);
+		model.addAttribute("tipoConvenio", tconvenioService.listarTodos(convenio_id));
+		return "agenda/editar";
+	}
+
+	@PostMapping("/atualizar")
+	public String atualizarAgendamento(Agenda agenda, RedirectAttributes attr, @AuthenticationPrincipal User user) {
+		/*
+		 * Agenda a = service.buscarPorId(agenda.getId()); if
+		 * (!agenda.getData().isEqual(a.getData())) { Log l = new Log(); Login login =
+		 * lservice.BuscarPorCPF(user.getUsername()); DateTimeFormatter formatador =
+		 * DateTimeFormatter.ofPattern("dd/MM/yyyy"); l.setData(LocalDate.now());
+		 * l.setFuncionario_id(login.getFuncionario_id()); l.setHora(LocalTime.now());
+		 * l.setDescricao( "ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " +
+		 * a.getPaciente_id().getNome() + ". DO DIA " + a.getData().format(formatador) +
+		 * " PARA O DIA " + agenda.getData().format(formatador)); logservice.salvar(l);
+		 * }
+		 */
+
+		service.salvar(agenda);
+		attr.addFlashAttribute("sucesso", "Informações alteradas com sucesso!");
+		return "redirect:/agenda/agendamentos";
+	}
+
+	/* Metodos para JS */
 	@GetMapping("/convenio/{convenio}/{medico}")
-	public @ResponseBody List<TConvenio> listTipoConvenio(@PathVariable("convenio") String convenio, @PathVariable("medico") String medico, Agenda agenda) {
+	public @ResponseBody List<TConvenio> listTipoConvenio(@PathVariable("convenio") String convenio,
+			@PathVariable("medico") String medico, Agenda agenda) {
 		Funcionario funcionario = funcionarioService.buscarporId(medico).get();
 		List<TConvenio> tiposConveniosAceitos = new ArrayList<TConvenio>();
-		for(TConvenio t: funcionario.getTconvenio()) {
-			if(t.getConvenio().getId().equals(convenio)) {
+		for (TConvenio t : funcionario.getTconvenio()) {
+			if (t.getConvenio().getId().equals(convenio)) {
 				tiposConveniosAceitos.add(t);
 			}
 		}
-		
+
 		return tiposConveniosAceitos;
 	}
 
@@ -159,19 +232,20 @@ public class AgendaController extends AbstractController{
 		Funcionario medico = funcionarioService.buscarporId(id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
 		String convenioInserido = "";
-		for(TConvenio tc : medico.getTconvenio()) {
-			if(conveniosAceitos.isEmpty()) {
-				//Primeiro a ser inserido no array
-				convenioInserido  = tc.getConvenio().getId();
+		for (TConvenio tc : medico.getTconvenio()) {
+			if (conveniosAceitos.isEmpty()) {
+				// Primeiro a ser inserido no array
+				convenioInserido = tc.getConvenio().getId();
 				conveniosAceitos.add(tc.getConvenio());
-				
-			}else if (!tc.getConvenio().getId().equals(convenioInserido)) {
-				//Verificação para ver se o convenio ja esta dentro do array para que não haja repetição
-				convenioInserido  = tc.getConvenio().getId();
+
+			} else if (!tc.getConvenio().getId().equals(convenioInserido)) {
+				// Verificação para ver se o convenio ja esta dentro do array para que não haja
+				// repetição
+				convenioInserido = tc.getConvenio().getId();
 				conveniosAceitos.add(tc.getConvenio());
-				
+
 			}
-			
+
 		}
 		return conveniosAceitos;
 	}

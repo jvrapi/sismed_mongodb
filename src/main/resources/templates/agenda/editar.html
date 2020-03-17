@@ -66,7 +66,7 @@
                 <div th:replace="fragmentos/modal" class="container"></div>
             </div>
             <div class="container-fluid" style="width: 98%">
-                <form th:action="@{/agenda/editar}" th:object="${agendamento}" method="POST">
+                <form th:action="@{/agenda/atualizar}" th:object="${agendamento}" method="POST">
                     <div id="div_botao">
                         <h3 style="display: inline; margin-left: 10px;"><strong >Edição de Agendamento</strong></h3>
                         <a class="btn btn-outline-secondary float-right ml-2" th:href="@{/agenda/agendamentos}" role="button"> <i class="fas fa-chevron-left"></i> Voltar</a>
@@ -82,37 +82,37 @@
                             <div class="form-row">
                                 <div class="form-group col-md-1">
                                     <label for="prontuario">Prontuario</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="prontuario" th:field="*{paciente_id}" disabled/>
-                                    <input type="hidden" th:field="*{paciente_id}">
+                                    <input type="text" class="form-control tamanho-fonte" id="prontuario" th:field="*{paciente.matricula}" disabled/>
+                                    <input type="hidden" th:field="*{paciente}">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="nome">Nome</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="nome" th:value="*{paciente_id.nome}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="nome" th:value="*{paciente.nome}" disabled/>
                                 </div>
 
                                 <div class="form-group col-md-2">
                                     <label for="convenio">Convenio</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="convenio" th:value="*{paciente_id.tipo_convenio.convenio.nome}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="convenio" th:value="*{paciente.tipo_convenio.convenio.nome}" disabled/>
                                 </div>
 
                                 <div class="form-group col-md-2">
                                     <label for="tipo_convenio">Tipo Convenio</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="tipo_convenio" th:value="*{paciente_id.tipo_convenio.nome}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="tipo_convenio" th:value="*{paciente.tipo_convenio.nome}" disabled/>
                                 </div>
 
                                 <div class="form-group col-md-1">
                                     <label for="CPF">CPF</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="CPF" th:value="*{paciente_id.cpf}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="CPF" th:value="*{paciente.cpf}" disabled/>
                                 </div>
 
                                 <div class="form-group col-md-1">
                                     <label for="RG">RG</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="RG" th:value="*{paciente_id.rg}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="RG" th:value="*{paciente.rg}" disabled/>
                                 </div>
 
                                 <div class="form-group col-md-1">
                                     <label for="nascimento">Nascimento</label>
-                                    <input type="text" class="form-control tamanho-fonte" id="nascimento" th:value="*{#temporals.format(paciente_id.data_nascimento, 'dd / MM / yyyy')}" disabled/>
+                                    <input type="text" class="form-control tamanho-fonte" id="nascimento" th:value="*{#temporals.format(paciente.data_nascimento, 'dd / MM / yyyy')}" disabled/>
                                 </div>
                             </div>
 
@@ -146,7 +146,7 @@
                                 <div class="form-group col-md-2">
                                     <label for="convenio_id">Convenio</label>
                                     <select id="convenio_id" class="form-control tamanho-fonte" required disabled>
-                                        <option th:each="c : ${convenio} " th:value="${c.id}" th:text="${c.nome}">Selecione</option>
+                                        <option th:each="c : ${convenio} " th:value="${c.id}" th:text="${c.nome}" th:selected="(${c.id} == *{tipo_convenio.convenio.id})">Selecione</option>
 
                                     </select>
                                 </div>
@@ -155,7 +155,7 @@
 
                                     <label for="tipo_convenio">Tipo de convenio</label>
                                     <select id="tipo_convenio_id" class="form-control tamanho-fonte" required th:field="*{tipo_convenio}" disabled>
-                                        <option th:each="tc : ${tipoConvenio} " th:value="${tc.id}" th:text="${tc.nome}" selected>Selecione</option>
+                                        <option th:each="tc : ${tipoConvenio} " th:value="${tc.id}" th:text="${tc.nome}" th:selected="(${tc.id} == *{tipo_convenio.id})">Selecione</option>
 
                                     </select>
 
