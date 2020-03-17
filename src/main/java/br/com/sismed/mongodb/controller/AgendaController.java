@@ -1,7 +1,6 @@
 package br.com.sismed.mongodb.controller;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +15,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Agenda;
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
+import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.Procedimento;
 import br.com.sismed.mongodb.domain.TConvenio;
@@ -204,6 +205,75 @@ public class AgendaController extends AbstractController {
 		attr.addFlashAttribute("sucesso", "Informações alteradas com sucesso!");
 		return "redirect:/agenda/agendamentos";
 	}
+	
+	@GetMapping("/listar/{id}")
+	@ResponseBody
+	public List<LabelValue> listar(@PathVariable("id") Integer id,
+			@RequestParam(value = "term", required = false, defaultValue = "") String term) {
+		List<LabelValue> suggeestions = new ArrayList<LabelValue>();
+		if (id == 1) {
+			List<Paciente> allPacientes = pacienteService.ListarPacNome(term);
+			if (allPacientes.isEmpty()) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel("Paciente não encontrado, Realizar Pre-Cadastro");
+				lv.setValue2("0");
+				suggeestions.add(lv);
+			}
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		} else if (id == 2) {
+			List<Paciente> allPacientes = pacienteService.ListarPacId(term);
+			if (allPacientes.isEmpty()) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel("Paciente não encontrado, Realizar Pre-Cadastro");
+				lv.setValue2("0");
+				suggeestions.add(lv);
+			}
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		} else if (id == 3) {
+			List<Paciente> allPacientes = pacienteService.PesquisarCPF(term);
+			if (allPacientes.isEmpty()) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel("Paciente não encontrado, Realizar Pre-Cadastro");
+				lv.setValue2("0");
+				suggeestions.add(lv);
+			}
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		} else if (id == 4) {
+			List<Paciente> allPacientes = pacienteService.PesquisarTelefone(term);
+			if (allPacientes.isEmpty()) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel("Paciente não encontrado, Realizar Pre-Cadastro");
+				lv.setValue2("0");
+				suggeestions.add(lv);
+			}
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		}
+		return suggeestions;
+	}
+	
+	
+	
+	
 
 	/* Metodos para JS */
 	@GetMapping("/convenio/{convenio}/{medico}")

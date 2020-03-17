@@ -20,30 +20,53 @@ public class PacienteService {
 	public List<Paciente> buscarTodos() {
 		return pRepository.findAll();
 	}
-	
+
 	public void salvar(Paciente paciente) {
 		Paciente lastPaciente = lastPaciente();
-		if(lastPaciente != null) {
+		if (lastPaciente != null) {
 			Long matricula = lastPaciente.getMatricula() + 1;
 			paciente.setMatricula(matricula);
-		}
-		else {
+		} else {
 			paciente.setMatricula(1L);
 		}
 		pRepository.save(paciente);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Paciente lastPaciente() {
 		return pRepository.findTopByOrderByIdDesc();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Optional<Paciente> buscarPorId(String id) {
 		return pRepository.findById(id);
 	}
-	
+
 	public void excluir(String id) {
 		pRepository.deleteById(id);
 	}
+	
+	public List<Paciente> ListarPacId(String dado) {
+		Long matricula = Long.parseLong(dado);
+		return pRepository.findByMatricula(matricula);
+	}
+	
+	
+	public List<Paciente> ListarPacNome(String dado) {
+		return pRepository.findByNomeRegex(dado);
+	}
+
+	
+	public List<Paciente> PesquisarCPF(String dado) {
+		return pRepository.findByCpfRegex(dado);
+	}
+
+	
+	public List<Paciente> PesquisarTelefone(String dado) {
+		return  pRepository.findByTelefone_fixoRegex(dado);
+	}
+	
+	public List<Paciente> PesquisarCelular(String dado) {
+		return pRepository.findByCelularRegex(dado);
+	} 
 }
