@@ -13,7 +13,7 @@ $(document).ready(function() {
 			var url = "http://localhost:8080/agenda/agendaFuncionario/" + $(this).val();
 			$("#resultsBlock").load(url);
 			$("#data").prop("disabled", false);
-			$("#data").val(yr+"-"+mt+"-"+dy);
+			//$("#data").val(yr+"-"+mt+"-"+dy);
 		});
 	
 	}else{
