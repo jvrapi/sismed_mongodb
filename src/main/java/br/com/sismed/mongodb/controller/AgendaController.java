@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,15 @@ import br.com.sismed.mongodb.domain.Agenda;
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
+import br.com.sismed.mongodb.domain.Log;
+import br.com.sismed.mongodb.domain.Login;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.Procedimento;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.AgendaService;
 import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
+import br.com.sismed.mongodb.service.LogService;
 import br.com.sismed.mongodb.service.PacienteService;
 import br.com.sismed.mongodb.service.ProcedimentoService;
 import br.com.sismed.mongodb.service.TConvenioService;
@@ -54,6 +58,9 @@ public class AgendaController extends AbstractController {
 
 	@Autowired
 	private FuncionarioService funcionarioService;
+	
+	@Autowired
+	private LogService logService;
 
 	@GetMapping()
 	public ResponseEntity<Agenda> mostrarDados() {
@@ -187,19 +194,19 @@ public class AgendaController extends AbstractController {
 	
 	@PostMapping("/atualizar")
 	public String atualizarAgendamento(Agenda agenda, RedirectAttributes attr, @AuthenticationPrincipal User user) {
-		/*Agenda a = service.buscarPorId(agenda.getId());
+		Agenda a = service.buscarPorId(agenda.getId()).get();
 		if (!agenda.getData().isEqual(a.getData())) {
 			Log l = new Log();
-			Login login = lservice.BuscarPorCPF(user.getUsername());
+			Funcionario f = funcionarioService.buscarPorCpf(user.getUsername());
 			DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(login.getFuncionario_id());
+			l.setFuncionario_id(f);
 			l.setHora(LocalTime.now());
 			l.setDescricao(
-					"ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + a.getPaciente_id().getNome() + ". DO DIA "
+					"ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + a.getPaciente().getNome() + ". DO DIA "
 							+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
-			logservice.salvar(l);
-		}*/
+			logService.salvar(l);
+		}
 
 		service.salvar(agenda);
 		attr.addFlashAttribute("sucesso", "Informações alteradas com sucesso!");
