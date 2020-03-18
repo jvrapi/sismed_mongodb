@@ -2,7 +2,8 @@ $(document).ready(function() {
 	$("#btn_cadastrar").prop("disabled", true);
     $("#allconvenio_id").change(function() {
     	$("#btn_cadastrar").prop("disabled", true);
-        var url = "http://localhost:8080/funcionario/listarTiposPorConvenio/" + $(this).val();
+    	
+        var url = "http://localhost:8080/funcionario/listarTiposPorConvenio/" + $(this).val() + "/" + $("#idModal").val();
         $.ajax({
             url: url,
             method: "get",

@@ -142,9 +142,22 @@ public class FuncionarioController extends AbstractController{
 	}
 	
 	@ResponseBody
-	@GetMapping("/listarTiposPorConvenio/{id}")
-	public List<TConvenio> listarTiposPorConvenio(@PathVariable("id") String id) {
-		return tcService.listarTodos(id);
+	@GetMapping("/listarTiposPorConvenio/{id}/{funcId}")
+	public List<TConvenio> listarTiposPorConvenio(@PathVariable("id") String id, @PathVariable("funcId") String funcId) {
+		List<TConvenio> funcTipos = service.buscarporId(funcId).get().getTconvenio();
+		List<TConvenio> todosTipos = tcService.listarTodos(id);
+		List<TConvenio> tiposNaoCadastrados = new ArrayList<TConvenio>();
+		
+		for (TConvenio todosTipos2 : todosTipos) {
+			for (TConvenio funcTipos2 : funcTipos) {
+				if(!todosTipos2.getId().equals(funcTipos2.getId())) {
+					
+					 tiposNaoCadastrados.add(todosTipos2);
+				}
+			}
+		}
+		return tiposNaoCadastrados;
+		
 	}
 	
 	@ResponseBody
