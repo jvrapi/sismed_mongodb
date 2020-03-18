@@ -141,25 +141,29 @@ public class FuncionarioController extends AbstractController{
 		return "redirect:/funcionario/listar";
 	}
 	
+	//modal de cadastro
 	@ResponseBody
 	@GetMapping("/listarTiposPorConvenio/{id}/{funcId}")
 	public List<TConvenio> listarTiposPorConvenio(@PathVariable("id") String id, @PathVariable("funcId") String funcId) {
 		List<TConvenio> funcTipos = service.buscarporId(funcId).get().getTconvenio();
 		List<TConvenio> todosTipos = tcService.listarTodos(id);
 		List<TConvenio> tiposNaoCadastrados = new ArrayList<TConvenio>();
-		
+		int flag;
 		for (TConvenio todosTipos2 : todosTipos) {
+			flag = 1;
 			for (TConvenio funcTipos2 : funcTipos) {
-				if(!todosTipos2.getId().equals(funcTipos2.getId())) {
-					
-					 tiposNaoCadastrados.add(todosTipos2);
+				if(todosTipos2.getId().equals(funcTipos2.getId())) {
+					flag = 0;
+					break;
 				}
 			}
+			if(flag == 1) 
+				tiposNaoCadastrados.add(todosTipos2);
 		}
-		return tiposNaoCadastrados;
-		
+		return tiposNaoCadastrados;		
 	}
 	
+	//modal de exclusão
 	@ResponseBody
 	@GetMapping("/listarTiposPorConvenioFunc/{convId}/{funcId}")
 	public List<TConvenio> listarTiposPorConvenioFunc(@PathVariable("convId") String convId,  @PathVariable("funcId") String funcId) {
