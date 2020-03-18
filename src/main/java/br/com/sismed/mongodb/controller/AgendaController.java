@@ -103,7 +103,7 @@ public class AgendaController extends AbstractController {
 		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		String dataAgendada = agenda.getData().format(formatador);
 		service.salvar(agenda);
-		attr.addFlashAttribute("success", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
+		attr.addFlashAttribute("sucesso", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
 		return "redirect:/agenda/agendamentos";
 	}
 
@@ -223,6 +223,7 @@ public class AgendaController extends AbstractController {
 				LabelValue lv = new LabelValue();
 				lv.setLabel(paciente.getNome());
 				lv.setValue2(paciente.getId());
+				
 				suggeestions.add(lv);
 			}
 		} else if (id == 2) {
@@ -272,7 +273,33 @@ public class AgendaController extends AbstractController {
 	}
 	
 	
+	@GetMapping("/preCadastro")
+	public String preCadastro(Agenda agenda, Paciente paciente, ModelMap model) {
+		Paciente p = pacienteService.lastPaciente();
+		Long prontuario = p.getMatricula();
+		prontuario+=1;
+
+		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
+		model.addAttribute("prontuario", prontuario);
+
+		return "agenda/preCadastro";
+	}
 	
+	@PostMapping("/salvarPreCadastro")
+	public String salvarPreCadastro(Agenda agenda, Paciente paciente, RedirectAttributes attr) {
+		agenda.setPrimeira_vez(1L);
+		agenda.setPagou(1L);
+		agenda.setCompareceu(1L);
+		agenda.setPaciente(paciente);
+		paciente.setTipo_convenio(agenda.getTipo_convenio());
+		paciente.setSituacao("A");
+		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		String dataAgendada = agenda.getData().format(formatador);
+		pacienteService.salvar(paciente);
+		service.salvar(agenda);
+		attr.addFlashAttribute("sucesso", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
+		return "redirect:/agenda/agendamentos";
+	}
 	
 
 	/* Metodos para JS */

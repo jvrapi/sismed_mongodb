@@ -10,7 +10,7 @@ $(document).ready(function() {
 						document.location.href = url;
 						return false;
 					}
-					url = "http://localhost:8080/agenda/agendar/" + ui.item.value;
+					url = "http://localhost:8080/agenda/agendar/" + ui.item.value2;
 					document.location.href = url;
 					return false;
 					
@@ -35,7 +35,7 @@ function muda() {
 								document.location.href = url;
 								return false;
 							}
-							url = "http://localhost:8080/agenda/agendar/" + ui.item.value;
+							url = "http://localhost:8080/agenda/agendar/" + ui.item.value2;
 							document.location.href = url;
 							return false;
 						}
@@ -52,7 +52,7 @@ function muda() {
 						source: "http://localhost:8080/agenda/listar/2",
 						minLength: 1,
 						select: function (event, ui) {
-							url = "http://localhost:8080/agenda/agendar/" + ui.item.value;
+							url = "http://localhost:8080/agenda/agendar/" + ui.item.value2;
 							document.location.href = url;
 							return false;
 						}
@@ -70,7 +70,7 @@ function muda() {
 						source: "http://localhost:8080/agenda/listar/3",
 						minLength: 2,
 						select: function (event, ui) {
-							url = "http://localhost:8080/agenda/agendar/" + ui.item.value;
+							url = "http://localhost:8080/agenda/agendar/" + ui.item.value2;
 							document.location.href = url;
 							return false;
 						}
@@ -88,7 +88,7 @@ function muda() {
 						source: "http://localhost:8080/agenda/listar/4",
 						minLength: 2,
 						select: function (event, ui) {
-							url = "http://localhost:8080/agenda/agendar/" + ui.item.value;
+							url = "http://localhost:8080/agenda/agendar/" + ui.item.value2;
 							document.location.href = url;
 							return false;
 						}
