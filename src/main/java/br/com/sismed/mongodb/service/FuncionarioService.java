@@ -6,6 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +26,9 @@ public class FuncionarioService implements UserDetailsService{
 
 	@Autowired
 	private FuncionarioRepository repository;
+	
+	@Autowired
+	private MongoTemplate template;
 	
 	public List<Funcionario> buscarTodos() {
 		return repository.findAll();
@@ -82,7 +89,11 @@ public class FuncionarioService implements UserDetailsService{
 	}
 
 	public void apagarTConv(String funcId, String tconvId) {
-		repository.apagarTConv(funcId, tconvId);
+		template.updateMulti(new Query(Criteria.where("_id").is(funcId)),
+		        new Update().pull("tconvenio", Query.query(Criteria.where("_id").is(tconvId))), "sismed_funcionario");
+		
+		
+		//repository.apagarTConv(funcId, tconvId);
 	}
 	
 }

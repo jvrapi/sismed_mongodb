@@ -100,10 +100,18 @@ public class FuncionarioController extends AbstractController{
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		Funcionario funcionario = service.buscarporId(id).get();
 		List<Convenio> listConvenio = new ArrayList<>();
+		String convenioInserido = "";
 		if(funcionario.getCrm() != null) {
 			if(funcionario.getTconvenio() != null) {
 				for(int i = 0; i < funcionario.getTconvenio().size(); i++) {
+					if(listConvenio.isEmpty()) {
+					convenioInserido = funcionario.getTconvenio().get(i).getConvenio().getId();
 					listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+					}
+					if(!funcionario.getTconvenio().get(i).getConvenio().getId().equals(convenioInserido)) {
+						convenioInserido = funcionario.getTconvenio().get(i).getConvenio().getId();
+						listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+					}
 				}
 			}
 			model.addAttribute("funcionario", funcionario);
