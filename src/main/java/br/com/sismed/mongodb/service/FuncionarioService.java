@@ -96,4 +96,8 @@ public class FuncionarioService implements UserDetailsService{
 		//repository.apagarTConv(funcId, tconvId);
 	}
 	
+	public List<Funcionario> ListarFuncionarioNome(String dado){
+		
+		return repository.findByNome(dado);
+	}
 }

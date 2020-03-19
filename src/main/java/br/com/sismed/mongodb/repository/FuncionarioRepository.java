@@ -38,5 +38,8 @@ public interface FuncionarioRepository extends MongoRepository<Funcionario, Stri
 	
 	@Query(value ="{$update: {'_id': ?0}, {$pull: {'tconvenio': { '_id': ?1} } } }")
 	public void apagarTConv(String funcId, String tconvId);
+
+	@Query("{ 'nome' : { '$regex' : ?0 , $options: 'i'}}")
+	public List<Funcionario> findByNome(String dado);
 	
 }

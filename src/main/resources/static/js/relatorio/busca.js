@@ -4,7 +4,7 @@ $(document).ready(function () {
 			source: "http://localhost:8080/relatorio/buscar/1",
 			minLength: 1,
 			select: function (event, ui) {
-				$("#paciente").val(ui.item.value);
+				$("#paciente").val(ui.item.value2);
 				$("#pacienteCheck").prop("checked", true);
 				return false;
 			}
@@ -30,7 +30,7 @@ function muda() {
 			source: "http://localhost:8080/relatorio/buscar/1",
 			minLength: 1,
 			select: function (event, ui) {
-				$("#paciente").val(ui.item.value);
+				$("#paciente").val(ui.item.value2);
 				$("#pacienteCheck").prop("checked", true);
 				return false;
 			}
@@ -112,7 +112,7 @@ function muda4() {
 			source: "http://localhost:8080/relatorio/buscar/3",
 			minLength: 2,
 			select: function (event, ui) {
-				$("#funcionario").val(ui.item.value);
+				$("#funcionario").val(ui.item.value2);
 				$("#funcionarioCheck").prop("checked", true);
 				return false;
 			}

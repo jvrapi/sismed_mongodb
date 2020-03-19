@@ -47,6 +47,10 @@ public class ConvenioService {
 		repository.deleteById(id);
 	}
 
+	public List<Convenio> ListarPorNome(String term) {
+		return repository.findByNome(term);
+	}
+
 	
 
 }
