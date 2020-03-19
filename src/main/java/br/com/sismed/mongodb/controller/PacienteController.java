@@ -1,5 +1,6 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
+import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
@@ -74,6 +77,49 @@ public class PacienteController extends AbstractController{
 		pService.excluir(id);
 		attr.addFlashAttribute("sucesso", "Paciente excluido com sucesso");
 		return "redirect:/pacientes/listar";
+	}
+	
+	@GetMapping("/buscar/{id}")
+	@ResponseBody
+	public List<LabelValue> listar(@PathVariable("id") Integer id, @RequestParam (value="term", required=false, defaultValue="") String term) {
+		List<LabelValue> suggeestions = new ArrayList<LabelValue>();
+		if(id == 1) {
+			List<Paciente> allPacientes = pService.ListarPacId(term);
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		}
+		else if(id == 2) {
+			List<Paciente> allPacientes = pService.ListarPacNome(term);
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		}
+		else if(id == 3) {
+			List<Paciente> allPacientes = pService.PesquisarCPF(term);
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		}
+		else if(id == 4) {
+			List<Paciente> allPacientes = pService.PesquisarCelular(term);
+			for (Paciente paciente : allPacientes) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(paciente.getNome());
+				lv.setValue2(paciente.getId());
+				suggeestions.add(lv);
+			}
+		}
+		return suggeestions;
 	}
 	
 	@ResponseBody

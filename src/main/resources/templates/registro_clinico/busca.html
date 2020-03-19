@@ -56,17 +56,17 @@
                         <thead>
                             <th>Prontuário</th>
                             <th>Nome</th>
-                            <th>Descrição do último registro</th>
+                            <th>Descrição</th>
                             <th>Data</th>
                             <th>Hora</th>
                         </thead>
                         <tbody th:each="r : ${registro}">
                             <tr>
                                 <td>
-                                    <a th:text="${r.paciente_id.matricula}"></a>
+                                    <a th:text="${r.paciente.matricula}"></a>
                                 </td>
                                 <td>
-                                    <a th:href="@{/registroclinico/cadastrar/{id} (id=${r.paciente_id.id}) }" th:text="${r.paciente_id.nome}"></a>
+                                    <a th:href="@{/registroclinico/cadastrar/{id}/null (id=${r.paciente.id}) }" th:text="${r.paciente.nome}"></a>
                                 </td>
                                 <td>
                                     <a class="descricao" th:text="${r.descricao}"></a>

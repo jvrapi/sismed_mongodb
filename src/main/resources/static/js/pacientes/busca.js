@@ -14,6 +14,7 @@ $(document).ready(function() {
 function muda() {
 	$('#txtBusca').unmask();
 	$("#dropdownMenu2").text("Prontuário");
+	$('#txtBusca').val('');
 	$( function() {
 		$("#txtBusca").autocomplete({
 			source: "http://localhost:8080/pacientes/buscar/1",
@@ -29,6 +30,7 @@ function muda() {
 function muda2() {
 	$('#txtBusca').unmask();
 	$("#dropdownMenu2").text("Nome");
+	$('#txtBusca').val('');
 	$( function() {
 		$("#txtBusca").autocomplete({
 			source: "http://localhost:8080/pacientes/buscar/2",
@@ -45,6 +47,7 @@ function muda3() {
 	$('#txtBusca').unmask();
 	$('#txtBusca').mask('000.000.000-00');
 	$("#dropdownMenu2").text("CPF");
+	$('#txtBusca').val('');
 	$( function() {
 		$("#txtBusca").autocomplete({
 			source: "http://localhost:8080/pacientes/buscar/3",
@@ -61,6 +64,7 @@ function muda4() {
 	$('#txtBusca').unmask();
 	$('#txtBusca').mask('(00) 9 0000-0000');
 	$("#dropdownMenu2").text("Celular");
+	$('#txtBusca').val('');
 	$( function() {
 		$("#txtBusca").autocomplete({
 			source: "http://localhost:8080/pacientes/buscar/4",

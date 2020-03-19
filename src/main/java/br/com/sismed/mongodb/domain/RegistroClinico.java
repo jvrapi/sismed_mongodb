@@ -19,7 +19,7 @@ public class RegistroClinico extends AbstractEntity{
 	
 	private String descricao;
 	
-	private Paciente paciente_id;
+	private Paciente paciente;
 	
 	private Funcionario funcionario_id;
 	
@@ -65,12 +65,12 @@ public class RegistroClinico extends AbstractEntity{
 		this.funcionario_id = funcionario_id;
 	}
 
-	public Paciente getPaciente_id() {
-		return paciente_id;
+	public Paciente getPaciente() {
+		return paciente;
 	}
 
-	public void setPaciente_id(Paciente paciente_id) {
-		this.paciente_id = paciente_id;
+	public void setPaciente(Paciente paciente) {
+		this.paciente = paciente;
 	}
 
 	public int compararDatas(LocalDate rclinicoData) {

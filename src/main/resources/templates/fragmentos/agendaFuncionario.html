@@ -29,7 +29,7 @@
                                     <a th:href="@{/pacientes/editar/{id} (id=${a.paciente.id}) }" title="Clique aqui para abrir o cadastro completo do paciente" th:text="${a.paciente.matricula}"> </a>
                                 </td>
                                 <td>
-                                    <a title="Clique aqui para acessar os registros clinicos do paciente" th:href="@{/RegistroClinico/cadastrar/{id}/{agendamento} (id = ${a.paciente.id}, agendamento = ${a.id})}" th:text="${a.paciente.nome}"> </a>
+                                    <a title="Clique aqui para acessar os registros clinicos do paciente" th:href="@{/registroclinico/cadastrar/{id}/{agendamento} (id = ${a.paciente.id}, agendamento = ${a.id})}" th:text="${a.paciente.nome}"> </a>
                                 </td>
                                 <td>
                                     <a title="Mostrar informações" th:text="${a.paciente.telefone_fixo}"></a>

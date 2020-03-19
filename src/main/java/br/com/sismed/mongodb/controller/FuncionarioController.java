@@ -191,8 +191,10 @@ public class FuncionarioController extends AbstractController{
 	}
 	
 	@PostMapping("/excluirTConv")
-	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") TConvenio tconvenio) {
-		service.apagarTConv(funcId, tconvenio.getId());
+	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") List<TConvenio> tconvenios) {
+		for (TConvenio tConvenio : tconvenios) {
+			service.apagarTConv(funcId, tConvenio.getId());
+		}
 		return "redirect:/funcionario/editar/" + funcId;
 	}
 	
