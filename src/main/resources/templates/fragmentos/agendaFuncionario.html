@@ -26,7 +26,7 @@
                         <tbody th:each="a : ${agendamentos}">
                             <tr class="conteudo text-center" style="font-size: 1em;">
                                 <td>
-                                    <a th:href="@{/pacientes/editar/{id}/{cid} (id=${a.paciente.id} , cid=${a.paciente.tipo_convenio.convenio.id}) }" title="Clique aqui para abrir o cadastro completo do paciente" th:text="${a.paciente.matricula}"> </a>
+                                    <a th:href="@{/pacientes/editar/{id} (id=${a.paciente.id}) }" title="Clique aqui para abrir o cadastro completo do paciente" th:text="${a.paciente.matricula}"> </a>
                                 </td>
                                 <td>
                                     <a title="Clique aqui para acessar os registros clinicos do paciente" th:href="@{/RegistroClinico/cadastrar/{id} (id = ${a.id})}" th:text="${a.paciente.nome}"> </a>

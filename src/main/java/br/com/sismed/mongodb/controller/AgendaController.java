@@ -5,8 +5,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -22,15 +26,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Agenda;
 import br.com.sismed.mongodb.domain.Convenio;
+import br.com.sismed.mongodb.domain.Custos;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.Log;
-import br.com.sismed.mongodb.domain.Login;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.Procedimento;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.AgendaService;
 import br.com.sismed.mongodb.service.ConvenioService;
+import br.com.sismed.mongodb.service.CustosService;
 import br.com.sismed.mongodb.service.FuncionarioService;
 import br.com.sismed.mongodb.service.LogService;
 import br.com.sismed.mongodb.service.PacienteService;
@@ -61,11 +66,14 @@ public class AgendaController extends AbstractController {
 	
 	@Autowired
 	private LogService logService;
+	
+	@Autowired
+	private CustosService custosService;
 
 	@GetMapping()
-	public ResponseEntity<Agenda> mostrarDados() {
+	public ResponseEntity<List<Agenda>> mostrarDados() {
 		String paciente_id = "5e6a79bdebc6e0627990d464";
-		Agenda agendamento = service.ultimoAgendamento(paciente_id);
+		List<Agenda> agendamento = service.encerrarAtendimento();
 		return ResponseEntity.ok().body(agendamento);
 	}
 
@@ -308,6 +316,76 @@ public class AgendaController extends AbstractController {
 		return "redirect:/agenda/agendamentos";
 	}
 	
+	@GetMapping("/finalizar")
+	public String finalizarAtendimento(RedirectAttributes attr) {
+		List<Agenda> encerrar = service.encerrarAtendimento();
+		for (Agenda a : encerrar) {
+			if (a.getPrimeira_vez() == 1 && a.getCompareceu() == 0) {
+				// paciente pre cadastrado, porem não compareceu;
+				Paciente p = new Paciente();
+				p.setId(a.getPaciente().getId());
+				p.setNome(a.getPaciente().getNome());
+				p.setSituacao("NC");
+				p.setCelular(a.getPaciente().getCelular());
+				p.setTipo_convenio(a.getPaciente().getTipo_convenio());
+				pacienteService.salvar(p);
+			}
+			if (a.getPagou() == 1) {
+				// preenchendo a tabela de custos
+				Custos c = new Custos();
+				c.setAgendamento(a);
+				c.setConvenio(a.getTipo_convenio().getConvenio());
+				c.setFuncionario(a.getFuncionario());
+				c.setData(a.getData());
+				c.setHora(a.getHora());
+				c.setProcedimento(a.getProcedimento());
+				c.setPaciente(a.getPaciente());
+				c.setValor(a.getProcedimento().getValor());
+				custosService.salvar(c);
+
+			}
+		}
+		attr.addFlashAttribute("sucesso", "Atendimento finalizado com sucesso!");
+		return "redirect:/agenda/agendamentos";
+	}
+	
+	@GetMapping("/agendamentosAnteriores/{id}")
+	public String find(ModelMap model, @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+			@PathVariable("id") String id) {
+
+		PageRequest pagerequest = PageRequest.of(page - 1, 3);
+
+		Page<Agenda> agendamentos = service.agendamentosAnteriores(id, pagerequest);
+
+		model.addAttribute("agenda", agendamentos);
+		int totalPages = agendamentos.getTotalPages();
+		if (totalPages == 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (totalPages == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == 2 && totalPages == 3) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == 1 || page == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page > 2 && page < totalPages - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page - 2, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == totalPages - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page - 2, totalPages).boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == totalPages) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(totalPages - 2, totalPages).boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		return "fragmentos/agendamentosAnteriores :: resultsList";
+	}
+	
 
 	/* Metodos para JS */
 	@GetMapping("/convenio/{convenio}/{medico}")
@@ -363,5 +441,8 @@ public class AgendaController extends AbstractController {
 	public @ResponseBody Funcionario funcionarioInfo(@PathVariable("id") String id, Agenda agenda) {
 		return funcionarioService.buscarporId(id).get();
 	}
+	
+	
+	
 
 }

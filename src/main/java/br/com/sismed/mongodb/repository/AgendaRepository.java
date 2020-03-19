@@ -3,6 +3,8 @@ package br.com.sismed.mongodb.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,9 @@ public interface AgendaRepository extends MongoRepository<Agenda, String>{
 	List<Agenda> findByFuncionario_idAndDataOrderByHora(String id, LocalDate data);
 
 	Agenda findTopByPaciente_idOrderByIdDesc(String paciente_id);
+
+	List<Agenda> findByData(LocalDate now);
+
+	Page<Agenda> findByPaciente_id(String id, PageRequest pagerequest);
 
 }
