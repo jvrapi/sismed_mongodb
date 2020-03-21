@@ -23,7 +23,7 @@ public class TConvenioService {
 	
 	@Transactional(readOnly=true)
 	public List<TConvenio> listarTodos(String id){
-		return repository.findByConvenio_id(id);
+		return repository.findByConvenio(id);
 	}
 	
 	@Transactional(readOnly=true)

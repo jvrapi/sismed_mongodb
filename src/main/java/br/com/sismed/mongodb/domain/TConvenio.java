@@ -14,7 +14,7 @@ public class TConvenio extends AbstractEntity{
 	private String nome;
 	
 	
-	private Convenio convenio;
+	private String convenio;
 	
 	
     Set<LabTConv> tconv;
@@ -30,11 +30,11 @@ public class TConvenio extends AbstractEntity{
 		this.nome = nome;
 	}
 
-	public Convenio getConvenio() {
+	public String getConvenio() {
 		return convenio;
 	}
 
-	public void setConvenio(Convenio convenio) {
+	public void setConvenio(String convenio) {
 		this.convenio = convenio;
 	}
 	

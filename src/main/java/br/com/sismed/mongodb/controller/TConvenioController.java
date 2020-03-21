@@ -38,7 +38,7 @@ public class TConvenioController {
 	
 	@PostMapping("/salvar")
 	public String salvarTipo(TConvenio tconvenio, RedirectAttributes attr) {
-		String id = tconvenio.getConvenio().getId();
+		String id = tconvenio.getConvenio();
 		tservice.salvar(tconvenio);
 		attr.addFlashAttribute("sucesso", "Tipo de Convenio cadastrado com sucesso");
 		return "redirect:/tconvenios/cadastrar/"+id;

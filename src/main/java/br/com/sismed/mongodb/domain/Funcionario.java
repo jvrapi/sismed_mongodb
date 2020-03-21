@@ -56,7 +56,7 @@ public class Funcionario extends AbstractEntity {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_termino;
 
-	private List<TConvenio> tconvenio;
+	private List<String> tconvenio;
 	
 	private Perfil perfil;
 
@@ -238,11 +238,11 @@ public class Funcionario extends AbstractEntity {
 		this.data_termino = data_termino;
 	}
 
-	public List<TConvenio> getTconvenio() {
+	public List<String> getTconvenio() {
 		return tconvenio;
 	}
 
-	public void setTconvenio(List<TConvenio> tconvenio) {
+	public void setTconvenio(List<String> tconvenio) {
 		this.tconvenio = tconvenio;
 	}
 	

@@ -101,16 +101,23 @@ public class FuncionarioController extends AbstractController{
 		Funcionario funcionario = service.buscarporId(id).get();
 		List<Convenio> listConvenio = new ArrayList<>();
 		String convenioInserido = "";
+		Convenio c;
+		TConvenio tc;
 		if(funcionario.getCrm() != null) {
-			if(funcionario.getTconvenio() != null) {
-				for(int i = 0; i < funcionario.getTconvenio().size(); i++) {
+			if(!funcionario.getTconvenio().isEmpty()) {
+				for(String tipos: funcionario.getTconvenio()) {
+					System.out.println(tipos);
+					tc = tcService.buscarPorId(tipos).get();
 					if(listConvenio.isEmpty()) {
-					convenioInserido = funcionario.getTconvenio().get(i).getConvenio().getId();
-					listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+						convenioInserido = tc.getConvenio();
+						c = cService.buscarPorId(convenioInserido).get();
+						listConvenio.add(c);
+						
 					}
-					if(!funcionario.getTconvenio().get(i).getConvenio().getId().equals(convenioInserido)) {
-						convenioInserido = funcionario.getTconvenio().get(i).getConvenio().getId();
-						listConvenio.add(funcionario.getTconvenio().get(i).getConvenio());
+					else if(!tc.getConvenio().equals(convenioInserido)) {
+						convenioInserido = tc.getConvenio();
+						c = cService.buscarPorId(convenioInserido).get();
+						listConvenio.add(c);
 					}
 				}
 			}
@@ -145,14 +152,20 @@ public class FuncionarioController extends AbstractController{
 	@ResponseBody
 	@GetMapping("/listarTiposPorConvenio/{id}/{funcId}")
 	public List<TConvenio> listarTiposPorConvenio(@PathVariable("id") String id, @PathVariable("funcId") String funcId) {
-		List<TConvenio> funcTipos = service.buscarporId(funcId).get().getTconvenio();
+		List<String> funcTipos = service.buscarporId(funcId).get().getTconvenio();
+		List<TConvenio> funcTipos2 = new ArrayList<TConvenio>();
+		for(String tipos: funcTipos) {
+			TConvenio tc = tcService.buscarPorId(tipos).get();
+			funcTipos2.add(tc);
+			
+		}
 		List<TConvenio> todosTipos = tcService.listarTodos(id);
 		List<TConvenio> tiposNaoCadastrados = new ArrayList<TConvenio>();
 		int flag;
 		for (TConvenio todosTipos2 : todosTipos) {
 			flag = 1;
-			for (TConvenio funcTipos2 : funcTipos) {
-				if(todosTipos2.getId().equals(funcTipos2.getId())) {
+			for (TConvenio funcTipos3 : funcTipos2) {
+				if(todosTipos2.getId().equals(funcTipos3.getId())) {
 					flag = 0;
 					break;
 				}
@@ -167,10 +180,17 @@ public class FuncionarioController extends AbstractController{
 	@ResponseBody
 	@GetMapping("/listarTiposPorConvenioFunc/{convId}/{funcId}")
 	public List<TConvenio> listarTiposPorConvenioFunc(@PathVariable("convId") String convId,  @PathVariable("funcId") String funcId) {
-		List<TConvenio> listTConvenio = new ArrayList<TConvenio>();
 		Funcionario funcionario = service.buscarporId(funcId).get();
-		for (TConvenio tConvenio : funcionario.getTconvenio()) {
-			if(tConvenio.getConvenio().getId().equals(convId)) {
+		List<TConvenio> listTConvenio = new ArrayList<TConvenio>();
+		List<String> funcTipos = funcionario.getTconvenio();
+		List<TConvenio> tiposAceitos =  new ArrayList<TConvenio>();
+		
+		for(String tipos : funcTipos) {
+			TConvenio tc = tcService.buscarPorId(tipos).get();
+			tiposAceitos.add(tc);
+		}
+		for (TConvenio tConvenio : tiposAceitos) {
+			if(tConvenio.getConvenio().equals(convId)) {
 				listTConvenio.add(tConvenio);
 			}	
 		}
@@ -178,7 +198,7 @@ public class FuncionarioController extends AbstractController{
 	}
 	
 	@PostMapping("/salvarTConv")
-	public String salvarTConv(@RequestParam("tconvenio") List<TConvenio> tconvenios, @RequestParam("idModal") String id) {
+	public String salvarTConv(@RequestParam("tconvenio") List<String> tconvenios, @RequestParam("idModal") String id) {
 		Funcionario funcionario = service.buscarporId(id).get();
 		if(funcionario.getTconvenio() != null) {
 			funcionario.getTconvenio().addAll(tconvenios);
