@@ -15,19 +15,19 @@ public class Custos extends AbstractEntity{
 	
 	private static final long serialVersionUID = 1L;
 
-	private Agenda agendamento;
+	private String agendamento;
 	
 	
-	private Paciente paciente;
+	private String paciente;
 	
 	
-	private Convenio convenio;
+	private String convenio;
 	
 	
-	private Procedimento procedimento;
+	private String procedimento;
 	
 	
-	private Funcionario funcionario;
+	private String funcionario;
 	
 	private LocalDate data ;
 	
@@ -36,68 +36,81 @@ public class Custos extends AbstractEntity{
 
 	private BigDecimal valor;
 
-	public Agenda getAgendamento() {
+
+	public String getAgendamento() {
 		return agendamento;
 	}
 
-	public void setAgendamento(Agenda agendamento) {
+
+	public void setAgendamento(String agendamento) {
 		this.agendamento = agendamento;
 	}
 
-	
 
-	public Paciente getPaciente() {
+	public String getPaciente() {
 		return paciente;
 	}
 
-	public void setPaciente(Paciente paciente) {
+
+	public void setPaciente(String paciente) {
 		this.paciente = paciente;
 	}
 
-	public Convenio getConvenio() {
+
+	public String getConvenio() {
 		return convenio;
 	}
 
-	public void setConvenio(Convenio convenio) {
+
+	public void setConvenio(String convenio) {
 		this.convenio = convenio;
 	}
 
-	public Procedimento getProcedimento() {
+
+	public String getProcedimento() {
 		return procedimento;
 	}
 
-	public void setProcedimento(Procedimento procedimento) {
+
+	public void setProcedimento(String procedimento) {
 		this.procedimento = procedimento;
 	}
+
+
+	public String getFuncionario() {
+		return funcionario;
+	}
+
+
+	public void setFuncionario(String funcionario) {
+		this.funcionario = funcionario;
+	}
+
 
 	public LocalDate getData() {
 		return data;
 	}
 
+
 	public void setData(LocalDate data) {
 		this.data = data;
 	}
 
+
 	public LocalTime getHora() {
 		return hora;
 	}
+
 
 	public void setHora(LocalTime hora) {
 		this.hora = hora;
 	}
 
 
-	public Funcionario getFuncionario() {
-		return funcionario;
-	}
-
-	public void setFuncionario(Funcionario funcionario) {
-		this.funcionario = funcionario;
-	}
-
 	public BigDecimal getValor() {
 		return valor;
 	}
+
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;

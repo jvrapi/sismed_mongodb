@@ -26,17 +26,17 @@ public class AgendaService {
 
 	@Transactional(readOnly = true)
 	public List<Agenda> ListarAgendamentosMedico(String medico_id) {
-		return repository.findByFuncionario_idAndDataOrderByHora(medico_id, LocalDate.now());
+		return repository.findByFuncionarioAndDataOrderByHora(medico_id, LocalDate.now());
 	}
 
 	@Transactional(readOnly = true)
 	public Agenda ultimoAgendamento(String paciente_id) {
-		return repository.findTopByPaciente_idOrderByIdDesc(paciente_id);
+		return repository.findTopByPacienteOrderByIdDesc(paciente_id);
 	}
 
 	@Transactional(readOnly = true)
 	public List<Agenda> buscarAgendamentos(LocalDate data, String medico) {
-		return repository.findByFuncionario_idAndDataOrderByHora(medico, data);
+		return repository.findByFuncionarioAndDataOrderByHora(medico, data);
 	}
 
 	@Transactional(readOnly = true)
@@ -49,8 +49,11 @@ public class AgendaService {
 		return repository.findByData(LocalDate.now());
 	}
 
+	@Transactional(readOnly = true)
 	public Page<Agenda> agendamentosAnteriores(String id, PageRequest pagerequest) {
-		return repository.findByPaciente_id(id, pagerequest);
+		return repository.findByPaciente(id, pagerequest);
 	}
+	
+	
 	
 }

@@ -14,12 +14,13 @@ import br.com.sismed.mongodb.domain.Agenda;
 public interface AgendaRepository extends MongoRepository<Agenda, String>{
 
 	
-	List<Agenda> findByFuncionario_idAndDataOrderByHora(String id, LocalDate data);
+	List<Agenda> findByFuncionarioAndDataOrderByHora(String id, LocalDate data);
 
-	Agenda findTopByPaciente_idOrderByIdDesc(String paciente_id);
+	Agenda findTopByPacienteOrderByIdDesc(String paciente_id);
 
 	List<Agenda> findByData(LocalDate now);
 
-	Page<Agenda> findByPaciente_id(String id, PageRequest pagerequest);
+	Page<Agenda> findByPaciente(String id, PageRequest pagerequest);
+
 
 }

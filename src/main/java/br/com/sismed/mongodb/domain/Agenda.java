@@ -12,13 +12,13 @@ public class Agenda extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	private Paciente paciente;
+	private String paciente;
 
-	private Procedimento procedimento;
+	private String procedimento;
 
-	private Funcionario funcionario;
+	private String funcionario;
 
-	private TConvenio tipo_convenio;
+	private String tipo_convenio;
 
 	private String observacao;
 
@@ -33,35 +33,35 @@ public class Agenda extends AbstractEntity {
 
 	private LocalTime hora;
 
-	public Paciente getPaciente() {
+	public String getPaciente() {
 		return paciente;
 	}
 
-	public void setPaciente(Paciente paciente) {
+	public void setPaciente(String paciente) {
 		this.paciente = paciente;
 	}
 
-	public Procedimento getProcedimento() {
+	public String getProcedimento() {
 		return procedimento;
 	}
 
-	public void setProcedimento(Procedimento procedimento) {
+	public void setProcedimento(String procedimento) {
 		this.procedimento = procedimento;
 	}
 
-	public Funcionario getFuncionario() {
+	public String getFuncionario() {
 		return funcionario;
 	}
 
-	public void setFuncionario(Funcionario funcionario) {
+	public void setFuncionario(String funcionario) {
 		this.funcionario = funcionario;
 	}
 
-	public TConvenio getTipo_convenio() {
+	public String getTipo_convenio() {
 		return tipo_convenio;
 	}
 
-	public void setTipo_convenio(TConvenio tipo_convenio) {
+	public void setTipo_convenio(String tipo_convenio) {
 		this.tipo_convenio = tipo_convenio;
 	}
 

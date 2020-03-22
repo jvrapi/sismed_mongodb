@@ -70,12 +70,7 @@ public class AgendaController extends AbstractController {
 	@Autowired
 	private CustosService custosService;
 
-	@GetMapping()
-	public ResponseEntity<List<Agenda>> mostrarDados() {
-		String paciente_id = "5e6a79bdebc6e0627990d464";
-		List<Agenda> agendamento = service.encerrarAtendimento();
-		return ResponseEntity.ok().body(agendamento);
-	}
+	
 
 	@GetMapping("/agendamentos")
 	public String abrirAgendaDoDia(ModelMap model, @AuthenticationPrincipal User user) {
@@ -95,17 +90,19 @@ public class AgendaController extends AbstractController {
 	@GetMapping("/agendar/{id}")
 	public String abrirPaginaAgendamento(@PathVariable("id") String id, ModelMap model, Agenda agendar) {
 		Paciente paciente = pacienteService.buscarPorId(id).get();
-		Convenio convenio = convenioService.buscarPorId(paciente.getTipo_convenio().getConvenio().getId()).get();
+		TConvenio tc = tconvenioService.buscarPorId(paciente.getTipo_convenio()).get();
+		
+		Convenio convenio = convenioService.buscarPorId(tc.getConvenio()).get();
 		model.addAttribute("paciente", paciente);
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("convenio", convenio);
-
+		model.addAttribute("tipoConvenio", tc);
 		return "agenda/agendarPacienteCadastrado";
 	}
 
 	@PostMapping("/salvar1")
 	public String salvar(Agenda agenda, RedirectAttributes attr) {
-		if (service.ultimoAgendamento(agenda.getPaciente().getId()) == null) {
+		if (service.ultimoAgendamento(agenda.getPaciente()) == null) {
 			agenda.setPrimeira_vez(1L);
 			agenda.setPagou(1L);
 			agenda.setCompareceu(1L);
@@ -167,25 +164,33 @@ public class AgendaController extends AbstractController {
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		Agenda agendamento = service.buscarPorId(id).get();
-		String funcionario_id = agendamento.getFuncionario().getId();
-		String convenio_id = agendamento.getTipo_convenio().getConvenio().getId();
+		TConvenio tipoConvenioAgendamento = tconvenioService.buscarPorId(agendamento.getTipo_convenio()).get();
+		Convenio convenioAgendamento = convenioService.buscarPorId(tipoConvenioAgendamento.getConvenio()).get();
+		String funcionario_id = agendamento.getFuncionario();
+		String convenio_id = convenioAgendamento.getId();
 		
 		Funcionario medico = funcionarioService.buscarporId(funcionario_id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
-		
+		List<TConvenio> medicoTipos = new ArrayList<TConvenio>();
+		for (String tipos : medico.getTconvenio()) {
+			//Transforma o array de String em um Array de Tipos de Convenios
+			TConvenio tc = tconvenioService.buscarPorId(tipos).get();
+			medicoTipos.add(tc);
+		}
 		String convenioInserido = "";
-		for (TConvenio tc : medico.getTconvenio()) {
+		for (TConvenio tc :medicoTipos) {
 			//listar os convenios aceitos pelo medico
 			if (conveniosAceitos.isEmpty()) {
 				// Primeiro a ser inserido no array
-				convenioInserido = tc.getConvenio().getId();
-				conveniosAceitos.add(tc.getConvenio());
+				convenioInserido = tc.getConvenio();
+				Convenio convenioAceito = convenioService.buscarPorId(convenioInserido).get();
+				conveniosAceitos.add(convenioAceito);
 
-			} else if (!tc.getConvenio().getId().equals(convenioInserido)) {
+			} else if (!tc.getConvenio().equals(convenioInserido)) {
 				// Verificação para ver se o convenio ja esta dentro do array para que não haja
 				// repetição
-				convenioInserido = tc.getConvenio().getId();
-				conveniosAceitos.add(tc.getConvenio());
+				Convenio convenioAceito = convenioService.buscarPorId(convenioInserido).get();
+				conveniosAceitos.add(convenioAceito);
 			}
 
 		}
@@ -203,6 +208,7 @@ public class AgendaController extends AbstractController {
 	@PostMapping("/atualizar")
 	public String atualizarAgendamento(Agenda agenda, RedirectAttributes attr, @AuthenticationPrincipal User user) {
 		Agenda a = service.buscarPorId(agenda.getId()).get();
+		Paciente paciente = pacienteService.buscarPorId(a.getPaciente()).get();
 		if (!agenda.getData().isEqual(a.getData())) {
 			Log l = new Log();
 			Funcionario f = funcionarioService.buscarPorCpf(user.getUsername());
@@ -211,7 +217,7 @@ public class AgendaController extends AbstractController {
 			l.setFuncionario_id(f);
 			l.setHora(LocalTime.now());
 			l.setDescricao(
-					"ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + a.getPaciente().getNome() + ". DO DIA "
+					"ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + paciente.getNome() + ". DO DIA "
 							+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
 			logService.salvar(l);
 		}
@@ -305,7 +311,7 @@ public class AgendaController extends AbstractController {
 		agenda.setPrimeira_vez(1L);
 		agenda.setPagou(1L);
 		agenda.setCompareceu(1L);
-		agenda.setPaciente(paciente);
+		agenda.setPaciente(paciente.getId());
 		paciente.setTipo_convenio(agenda.getTipo_convenio());
 		paciente.setSituacao("A");
 		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -322,25 +328,27 @@ public class AgendaController extends AbstractController {
 		for (Agenda a : encerrar) {
 			if (a.getPrimeira_vez() == 1 && a.getCompareceu() == 0) {
 				// paciente pre cadastrado, porem não compareceu;
-				Paciente p = new Paciente();
-				p.setId(a.getPaciente().getId());
-				p.setNome(a.getPaciente().getNome());
+				Paciente p = pacienteService.buscarPorId(a.getPaciente()).get();
+			
 				p.setSituacao("NC");
-				p.setCelular(a.getPaciente().getCelular());
-				p.setTipo_convenio(a.getPaciente().getTipo_convenio());
+				
 				pacienteService.salvar(p);
 			}
 			if (a.getPagou() == 1) {
 				// preenchendo a tabela de custos
 				Custos c = new Custos();
-				c.setAgendamento(a);
-				c.setConvenio(a.getTipo_convenio().getConvenio());
+				TConvenio tc = tconvenioService.buscarPorId(a.getTipo_convenio()).get();
+				Convenio convenioAgendamento = convenioService.buscarPorId(tc.getConvenio()).get();
+				Procedimento procedimentoAgendamento = procedimentoService.buscarPorId(a.getProcedimento()).get();
+				c.setAgendamento(a.getId());
+				
+				c.setConvenio(convenioAgendamento.getId());
 				c.setFuncionario(a.getFuncionario());
 				c.setData(a.getData());
 				c.setHora(a.getHora());
 				c.setProcedimento(a.getProcedimento());
 				c.setPaciente(a.getPaciente());
-				c.setValor(a.getProcedimento().getValor());
+				c.setValor(procedimentoAgendamento.getValor());
 				custosService.salvar(c);
 
 			}
@@ -393,8 +401,13 @@ public class AgendaController extends AbstractController {
 			@PathVariable("medico") String medico, Agenda agenda) {
 		Funcionario funcionario = funcionarioService.buscarporId(medico).get();
 		List<TConvenio> tiposConveniosAceitos = new ArrayList<TConvenio>();
-		for (TConvenio t : funcionario.getTconvenio()) {
-			if (t.getConvenio().getId().equals(convenio)) {
+		List<TConvenio> tiposConveniosMedico  = new ArrayList<TConvenio>();
+		for (String tiposMedico : funcionario.getTconvenio()) {
+			TConvenio tc = tconvenioService.buscarPorId(tiposMedico).get();
+			tiposConveniosMedico.add(tc);
+		}
+		for (TConvenio t : tiposConveniosMedico) {
+			if (t.getConvenio().equals(convenio)) {
 				tiposConveniosAceitos.add(t);
 			}
 		}
@@ -418,18 +431,25 @@ public class AgendaController extends AbstractController {
 	public @ResponseBody List<Convenio> listarConvenios(@PathVariable("id") String id, Agenda agenda) {
 		Funcionario medico = funcionarioService.buscarporId(id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
+		List<TConvenio> tiposAceitosMedico = new ArrayList<TConvenio>();
+		for(String tiposMedico: medico.getTconvenio()) {
+			TConvenio tc = tconvenioService.buscarPorId(tiposMedico).get();
+			tiposAceitosMedico.add(tc);
+		}
 		String convenioInserido = "";
-		for (TConvenio tc : medico.getTconvenio()) {
+		for (TConvenio tc : tiposAceitosMedico) {
 			if (conveniosAceitos.isEmpty()) {
 				// Primeiro a ser inserido no array
-				convenioInserido = tc.getConvenio().getId();
-				conveniosAceitos.add(tc.getConvenio());
+				convenioInserido = tc.getConvenio();
+				Convenio convenio = convenioService.buscarPorId(convenioInserido).get();
+				conveniosAceitos.add(convenio);
 
-			} else if (!tc.getConvenio().getId().equals(convenioInserido)) {
+			} else if (!tc.getConvenio().equals(convenioInserido)) {
 				// Verificação para ver se o convenio ja esta dentro do array para que não haja
 				// repetição
-				convenioInserido = tc.getConvenio().getId();
-				conveniosAceitos.add(tc.getConvenio());
+				convenioInserido = tc.getConvenio();
+				Convenio convenio = convenioService.buscarPorId(convenioInserido).get();
+				conveniosAceitos.add(convenio);
 
 			}
 

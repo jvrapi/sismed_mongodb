@@ -56,7 +56,7 @@ public class Paciente extends AbstractEntity {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate validade;
 
-	private TConvenio tipo_convenio;
+	private String tipo_convenio;
 
 	private Endereco endereco;
 
@@ -228,11 +228,11 @@ public class Paciente extends AbstractEntity {
 		this.validade = validade;
 	}
 
-	public TConvenio getTipo_convenio() {
+	public String getTipo_convenio() {
 		return tipo_convenio;
 	}
 
-	public void setTipo_convenio(TConvenio tipo_convenio) {
+	public void setTipo_convenio(String tipo_convenio) {
 		this.tipo_convenio = tipo_convenio;
 	}
 

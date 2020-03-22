@@ -10,8 +10,8 @@ import br.com.sismed.mongodb.domain.Custos;
 @Repository
 public interface CustosRepository extends MongoRepository<Custos, String>{
 
-	List<Custos> findByPaciente_id(String paciente);
+	List<Custos> findByPaciente(String paciente);
 
-	List<Custos> findByConvenio_id(String convenio);
+	List<Custos> findByConvenio(String convenio);
 
 }

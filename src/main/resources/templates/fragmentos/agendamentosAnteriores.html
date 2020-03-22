@@ -24,8 +24,8 @@
 					<tr class="conteudo " style="font-size: 1em;">
 						
 						
-						<td><a th:text="${a.funcionario.nome}"></a></td>
-						<td><a th:text="${a.funcionario.especialidade}"></a></td>
+						<td th:each="medico : ${medico}" th:if="${a.funcionario == medico.id}"><a th:text="${medico.nome}"></a></td>
+						<td th:each="medico : ${medico}" th:if="${a.funcionario == medico.id}"><a th:text="${medico.especialidade}"></a></td>
 						<td><a th:text="${#temporals.format(a.data, 'dd/MM/yyyy')}"></a></td>
 						<td><a th:text="${#temporals.format(a.hora, 'HH:mm')}"></a></td>
 						<td><a th:text="${a.primeira_vez == 1} ? 'SIM' : 'NÃO' "></a></td>

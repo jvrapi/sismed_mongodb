@@ -25,7 +25,7 @@ public class CustosService {
 	@Transactional(readOnly=true)
 	public List<Custos> buscarPorPaciente(String paciente) {
 		
-		return repository.findByPaciente_id(paciente);
+		return repository.findByPaciente(paciente);
 	}
 
 	@Transactional(readOnly=true)
@@ -40,7 +40,7 @@ public class CustosService {
 
 	@Transactional(readOnly=true)
 	public List<Custos> buscarPorConvenio(String convenio) {
-		return repository.findByConvenio_id(convenio);
+		return repository.findByConvenio(convenio);
 	}
 	
 }
