@@ -242,9 +242,13 @@ public class AgendaController extends AbstractController {
 		Agenda agendamento = service.buscarPorId(id).get();
 		TConvenio tipoConvenioAgendamento = tconvenioService.buscarPorId(agendamento.getTipo_convenio()).get();
 		Convenio convenioAgendamento = convenioService.buscarPorId(tipoConvenioAgendamento.getConvenio()).get();
+		Procedimento procedimentoAgendamento = procedimentoService.buscarPorId(agendamento.getProcedimento()).get();
+		Paciente paciente = pacienteService.buscarPorId(agendamento.getPaciente()).get();
+		TConvenio pacienteTipoConvenio = tconvenioService.buscarPorId(paciente.getTipo_convenio()).get();
+		Convenio convenioPaciente = convenioService.buscarPorId(pacienteTipoConvenio.getConvenio()).get();
 		String funcionario_id = agendamento.getFuncionario();
 		String convenio_id = convenioAgendamento.getId();
-
+		
 		Funcionario medico = funcionarioService.buscarporId(funcionario_id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
 		List<TConvenio> medicoTipos = new ArrayList<TConvenio>();
@@ -275,6 +279,12 @@ public class AgendaController extends AbstractController {
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("convenio", conveniosAceitos);
 		model.addAttribute("tipoConvenio", tconvenioService.listarTodos(convenio_id));
+		model.addAttribute("paciente", paciente);
+		model.addAttribute("convenioPaciente", convenioPaciente);
+		model.addAttribute("tipoConvenioPaciente", pacienteTipoConvenio);
+		model.addAttribute("medico", medico);
+		model.addAttribute("convenioAgendamento", convenioAgendamento);
+		model.addAttribute("procedimento", procedimentoAgendamento);
 		return "agenda/editar";
 	}
 
@@ -293,7 +303,9 @@ public class AgendaController extends AbstractController {
 					+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
 			logService.salvar(l);
 		}
-
+		if(agenda.getObservacao().isEmpty()) {
+			agenda.setObservacao(null);
+		}
 		service.salvar(agenda);
 		attr.addFlashAttribute("sucesso", "Informações alteradas com sucesso!");
 		return "redirect:/agenda/agendamentos";
