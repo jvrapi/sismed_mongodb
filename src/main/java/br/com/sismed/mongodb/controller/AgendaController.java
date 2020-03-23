@@ -11,7 +11,6 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -29,6 +28,7 @@ import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Custos;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
+import br.com.sismed.mongodb.domain.ListAgendamentos;
 import br.com.sismed.mongodb.domain.Log;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.Procedimento;
@@ -63,14 +63,12 @@ public class AgendaController extends AbstractController {
 
 	@Autowired
 	private FuncionarioService funcionarioService;
-	
+
 	@Autowired
 	private LogService logService;
-	
+
 	@Autowired
 	private CustosService custosService;
-
-	
 
 	@GetMapping("/agendamentos")
 	public String abrirAgendaDoDia(ModelMap model, @AuthenticationPrincipal User user) {
@@ -91,7 +89,7 @@ public class AgendaController extends AbstractController {
 	public String abrirPaginaAgendamento(@PathVariable("id") String id, ModelMap model, Agenda agendar) {
 		Paciente paciente = pacienteService.buscarPorId(id).get();
 		TConvenio tc = tconvenioService.buscarPorId(paciente.getTipo_convenio()).get();
-		
+
 		Convenio convenio = convenioService.buscarPorId(tc.getConvenio()).get();
 		model.addAttribute("paciente", paciente);
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
@@ -138,14 +136,38 @@ public class AgendaController extends AbstractController {
 		String perfil = medico.getPerfil().getId();
 		String medico_id = medico.getId();
 		List<Agenda> agendamentos = service.ListarAgendamentosMedico(medico_id);
+		List<ListAgendamentos> ListAgendamentos = new ArrayList<ListAgendamentos>();
 
 		for (Agenda a : agendamentos) {
-			model.addAttribute("data", a.getData());
+			ListAgendamentos la = new ListAgendamentos();
+			TConvenio tc = tconvenioService.buscarPorId(a.getTipo_convenio()).get();
+			Convenio c = convenioService.buscarPorId(tc.getConvenio()).get();
+			Paciente p = pacienteService.buscarPorId(a.getPaciente()).get();
+			/* Informações do agendamento */
+			la.setId(a.getId());
+			la.setAgendamento_convenio(c.getNome());
+			la.setAgendamento_hora(a.getHora());
+			la.setAgendamento_data(a.getData());
+			la.setAgendamento_observacao(a.getObservacao());
+			la.setPrimeira_vez(a.getPrimeira_vez());
+			la.setPagou(a.getPagou());
+			la.setCompareceu(a.getCompareceu());
+			/* Informaçãos do paciente */
+			la.setPaciente_id(p.getId());
+			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_celular(p.getCelular());
+
+			la.setPaciente_telefone(p.getTelefone_fixo());
+
+			la.setPaciente_nascimento(p.getData_nascimento());
+			la.setPaciente_nome(p.getNome());
+
+			ListAgendamentos.add(la);
 
 		}
 		model.addAttribute("usuario", perfil);
 		model.addAttribute("funcionario", medico.getNome());
-		model.addAttribute("agendamentos", agendamentos);
+		model.addAttribute("agendamentos", ListAgendamentos);
 
 		return "fragmentos/agendaFuncionario :: resultsList";
 	}
@@ -168,18 +190,18 @@ public class AgendaController extends AbstractController {
 		Convenio convenioAgendamento = convenioService.buscarPorId(tipoConvenioAgendamento.getConvenio()).get();
 		String funcionario_id = agendamento.getFuncionario();
 		String convenio_id = convenioAgendamento.getId();
-		
+
 		Funcionario medico = funcionarioService.buscarporId(funcionario_id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
 		List<TConvenio> medicoTipos = new ArrayList<TConvenio>();
 		for (String tipos : medico.getTconvenio()) {
-			//Transforma o array de String em um Array de Tipos de Convenios
+			// Transforma o array de String em um Array de Tipos de Convenios
 			TConvenio tc = tconvenioService.buscarPorId(tipos).get();
 			medicoTipos.add(tc);
 		}
 		String convenioInserido = "";
-		for (TConvenio tc :medicoTipos) {
-			//listar os convenios aceitos pelo medico
+		for (TConvenio tc : medicoTipos) {
+			// listar os convenios aceitos pelo medico
 			if (conveniosAceitos.isEmpty()) {
 				// Primeiro a ser inserido no array
 				convenioInserido = tc.getConvenio();
@@ -194,17 +216,14 @@ public class AgendaController extends AbstractController {
 			}
 
 		}
-		
-		
-		
-		
+
 		model.addAttribute("agendamento", agendamento);
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("convenio", conveniosAceitos);
 		model.addAttribute("tipoConvenio", tconvenioService.listarTodos(convenio_id));
 		return "agenda/editar";
 	}
-	
+
 	@PostMapping("/atualizar")
 	public String atualizarAgendamento(Agenda agenda, RedirectAttributes attr, @AuthenticationPrincipal User user) {
 		Agenda a = service.buscarPorId(agenda.getId()).get();
@@ -216,9 +235,8 @@ public class AgendaController extends AbstractController {
 			l.setData(LocalDate.now());
 			l.setFuncionario_id(f);
 			l.setHora(LocalTime.now());
-			l.setDescricao(
-					"ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + paciente.getNome() + ". DO DIA "
-							+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
+			l.setDescricao("ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + paciente.getNome() + ". DO DIA "
+					+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
 			logService.salvar(l);
 		}
 
@@ -226,7 +244,7 @@ public class AgendaController extends AbstractController {
 		attr.addFlashAttribute("sucesso", "Informações alteradas com sucesso!");
 		return "redirect:/agenda/agendamentos";
 	}
-	
+
 	@GetMapping("/listar/{id}")
 	@ResponseBody
 	public List<LabelValue> listar(@PathVariable("id") Integer id,
@@ -244,7 +262,7 @@ public class AgendaController extends AbstractController {
 				LabelValue lv = new LabelValue();
 				lv.setLabel(paciente.getNome());
 				lv.setValue2(paciente.getId());
-				
+
 				suggeestions.add(lv);
 			}
 		} else if (id == 2) {
@@ -292,20 +310,19 @@ public class AgendaController extends AbstractController {
 		}
 		return suggeestions;
 	}
-	
-	
+
 	@GetMapping("/preCadastro")
 	public String preCadastro(Agenda agenda, Paciente paciente, ModelMap model) {
 		Paciente p = pacienteService.lastPaciente();
 		Long prontuario = p.getMatricula();
-		prontuario+=1;
+		prontuario += 1;
 
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("prontuario", prontuario);
 
 		return "agenda/preCadastro";
 	}
-	
+
 	@PostMapping("/salvarPreCadastro")
 	public String salvarPreCadastro(Agenda agenda, Paciente paciente, RedirectAttributes attr) {
 		agenda.setPrimeira_vez(1L);
@@ -321,7 +338,7 @@ public class AgendaController extends AbstractController {
 		attr.addFlashAttribute("sucesso", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
 		return "redirect:/agenda/agendamentos";
 	}
-	
+
 	@GetMapping("/finalizar")
 	public String finalizarAtendimento(RedirectAttributes attr) {
 		List<Agenda> encerrar = service.encerrarAtendimento();
@@ -329,9 +346,9 @@ public class AgendaController extends AbstractController {
 			if (a.getPrimeira_vez() == 1 && a.getCompareceu() == 0) {
 				// paciente pre cadastrado, porem não compareceu;
 				Paciente p = pacienteService.buscarPorId(a.getPaciente()).get();
-			
+
 				p.setSituacao("NC");
-				
+
 				pacienteService.salvar(p);
 			}
 			if (a.getPagou() == 1) {
@@ -341,7 +358,7 @@ public class AgendaController extends AbstractController {
 				Convenio convenioAgendamento = convenioService.buscarPorId(tc.getConvenio()).get();
 				Procedimento procedimentoAgendamento = procedimentoService.buscarPorId(a.getProcedimento()).get();
 				c.setAgendamento(a.getId());
-				
+
 				c.setConvenio(convenioAgendamento.getId());
 				c.setFuncionario(a.getFuncionario());
 				c.setData(a.getData());
@@ -356,7 +373,7 @@ public class AgendaController extends AbstractController {
 		attr.addFlashAttribute("sucesso", "Atendimento finalizado com sucesso!");
 		return "redirect:/agenda/agendamentos";
 	}
-	
+
 	@GetMapping("/agendamentosAnteriores/{id}")
 	public String find(ModelMap model, @RequestParam(value = "page", required = false, defaultValue = "1") int page,
 			@PathVariable("id") String id) {
@@ -393,7 +410,6 @@ public class AgendaController extends AbstractController {
 		}
 		return "fragmentos/agendamentosAnteriores :: resultsList";
 	}
-	
 
 	/* Metodos para JS */
 	@GetMapping("/convenio/{convenio}/{medico}")
@@ -401,7 +417,7 @@ public class AgendaController extends AbstractController {
 			@PathVariable("medico") String medico, Agenda agenda) {
 		Funcionario funcionario = funcionarioService.buscarporId(medico).get();
 		List<TConvenio> tiposConveniosAceitos = new ArrayList<TConvenio>();
-		List<TConvenio> tiposConveniosMedico  = new ArrayList<TConvenio>();
+		List<TConvenio> tiposConveniosMedico = new ArrayList<TConvenio>();
 		for (String tiposMedico : funcionario.getTconvenio()) {
 			TConvenio tc = tconvenioService.buscarPorId(tiposMedico).get();
 			tiposConveniosMedico.add(tc);
@@ -432,7 +448,7 @@ public class AgendaController extends AbstractController {
 		Funcionario medico = funcionarioService.buscarporId(id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
 		List<TConvenio> tiposAceitosMedico = new ArrayList<TConvenio>();
-		for(String tiposMedico: medico.getTconvenio()) {
+		for (String tiposMedico : medico.getTconvenio()) {
 			TConvenio tc = tconvenioService.buscarPorId(tiposMedico).get();
 			tiposAceitosMedico.add(tc);
 		}
@@ -461,8 +477,5 @@ public class AgendaController extends AbstractController {
 	public @ResponseBody Funcionario funcionarioInfo(@PathVariable("id") String id, Agenda agenda) {
 		return funcionarioService.buscarporId(id).get();
 	}
-	
-	
-	
 
 }
