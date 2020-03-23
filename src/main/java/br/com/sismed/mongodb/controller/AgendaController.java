@@ -121,11 +121,37 @@ public class AgendaController extends AbstractController {
 	public String agendaFuncionario(@PathVariable("id") String id, Agenda agenda, ModelMap model) {
 
 		List<Agenda> agendamentos = service.ListarAgendamentosMedico(id);
+		List<ListAgendamentos> ListAgendamentos = new ArrayList<ListAgendamentos>();
 
-		model.addAttribute("agendamentos", agendamentos);
 		for (Agenda a : agendamentos) {
-			model.addAttribute("data", a.getData());
+			ListAgendamentos la = new ListAgendamentos();
+			TConvenio tc = tconvenioService.buscarPorId(a.getTipo_convenio()).get();
+			Convenio c = convenioService.buscarPorId(tc.getConvenio()).get();
+			Paciente p = pacienteService.buscarPorId(a.getPaciente()).get();
+			/* Informações do agendamento */
+			la.setId(a.getId());
+			la.setAgendamento_convenio(c.getNome());
+			la.setAgendamento_hora(a.getHora());
+			la.setAgendamento_data(a.getData());
+			la.setAgendamento_observacao(a.getObservacao());
+			la.setPrimeira_vez(a.getPrimeira_vez());
+			la.setPagou(a.getPagou());
+			la.setCompareceu(a.getCompareceu());
+			/* Informaçãos do paciente */
+			la.setPaciente_id(p.getId());
+			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_celular(p.getCelular());
+
+			la.setPaciente_telefone(p.getTelefone_fixo());
+
+			la.setPaciente_nascimento(p.getData_nascimento());
+			la.setPaciente_nome(p.getNome());
+
+			ListAgendamentos.add(la);
+
 		}
+		model.addAttribute("agendamentos", ListAgendamentos);
+		
 		return "fragmentos/agendaFuncionario :: resultsList";
 	}
 
@@ -178,7 +204,35 @@ public class AgendaController extends AbstractController {
 
 		LocalDate dataAgendamento = LocalDate.parse(data);
 		List<Agenda> agendamentos = service.buscarAgendamentos(dataAgendamento, medico);
-		model.addAttribute("agendamentos", agendamentos);
+		List<ListAgendamentos> ListAgendamentos = new ArrayList<ListAgendamentos>();
+		for (Agenda a : agendamentos) {
+			ListAgendamentos la = new ListAgendamentos();
+			TConvenio tc = tconvenioService.buscarPorId(a.getTipo_convenio()).get();
+			Convenio c = convenioService.buscarPorId(tc.getConvenio()).get();
+			Paciente p = pacienteService.buscarPorId(a.getPaciente()).get();
+			/* Informações do agendamento */
+			la.setId(a.getId());
+			la.setAgendamento_convenio(c.getNome());
+			la.setAgendamento_hora(a.getHora());
+			la.setAgendamento_data(a.getData());
+			la.setAgendamento_observacao(a.getObservacao());
+			la.setPrimeira_vez(a.getPrimeira_vez());
+			la.setPagou(a.getPagou());
+			la.setCompareceu(a.getCompareceu());
+			/* Informaçãos do paciente */
+			la.setPaciente_id(p.getId());
+			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_celular(p.getCelular());
+
+			la.setPaciente_telefone(p.getTelefone_fixo());
+
+			la.setPaciente_nascimento(p.getData_nascimento());
+			la.setPaciente_nome(p.getNome());
+
+			ListAgendamentos.add(la);
+
+		}
+		model.addAttribute("agendamentos", ListAgendamentos);
 
 		return "fragmentos/agendaFuncionario :: resultsList";
 	}
@@ -381,8 +435,23 @@ public class AgendaController extends AbstractController {
 		PageRequest pagerequest = PageRequest.of(page - 1, 3);
 
 		Page<Agenda> agendamentos = service.agendamentosAnteriores(id, pagerequest);
+		List<ListAgendamentos> agendamentosAnteriores = new ArrayList<ListAgendamentos>();
+		
+		for(Agenda a : agendamentos) {
+			ListAgendamentos la = new ListAgendamentos();
+			Funcionario f = funcionarioService.buscarporId(a.getFuncionario()).get();
+			la.setMedico_nome(f.getNome());
+			la.setMedico_especialidade(f.getEscolaridade());
+			la.setAgendamento_data(a.getData());
+			la.setAgendamento_hora(a.getHora());
+			la.setPrimeira_vez(a.getPrimeira_vez());
+			la.setCompareceu(a.getCompareceu());
+			la.setAgendamento_observacao(a.getObservacao());
+			agendamentosAnteriores.add(la);
+		}
 
-		model.addAttribute("agenda", agendamentos);
+		model.addAttribute("agenda", agendamentosAnteriores);
+		model.addAttribute("paginacao", agendamentos);
 		int totalPages = agendamentos.getTotalPages();
 		if (totalPages == 1) {
 			List<Integer> pageNumbers = IntStream.rangeClosed(1, 1).boxed().collect(Collectors.toList());

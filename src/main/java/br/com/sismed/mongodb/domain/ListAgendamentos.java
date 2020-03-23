@@ -20,6 +20,8 @@ public class ListAgendamentos extends AbstractEntity {
 	private Long primeira_vez;
 	private Long compareceu;
 	private Long pagou;
+	private String medico_nome;
+	private String medico_especialidade;
 
 	public Long getPaciente_matricula() {
 		return paciente_matricula;
@@ -123,6 +125,22 @@ public class ListAgendamentos extends AbstractEntity {
 
 	public void setPagou(Long pagou) {
 		this.pagou = pagou;
+	}
+
+	public String getMedico_nome() {
+		return medico_nome;
+	}
+
+	public void setMedico_nome(String medico_nome) {
+		this.medico_nome = medico_nome;
+	}
+
+	public String getMedico_especialidade() {
+		return medico_especialidade;
+	}
+
+	public void setMedico_especialidade(String medico_especialidade) {
+		this.medico_especialidade = medico_especialidade;
 	}
 
 	public Boolean compararDatas(LocalDate agendamento) {

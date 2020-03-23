@@ -24,13 +24,13 @@
 					<tr class="conteudo " style="font-size: 1em;">
 						
 						
-						<td th:each="medico : ${medico}" th:if="${a.funcionario == medico.id}"><a th:text="${medico.nome}"></a></td>
-						<td th:each="medico : ${medico}" th:if="${a.funcionario == medico.id}"><a th:text="${medico.especialidade}"></a></td>
-						<td><a th:text="${#temporals.format(a.data, 'dd/MM/yyyy')}"></a></td>
-						<td><a th:text="${#temporals.format(a.hora, 'HH:mm')}"></a></td>
+						<td><a th:text="${a.medico_nome}"></a></td>
+						<td><a th:text="${a.medico_especialidade}"></a></td>
+						<td><a th:text="${#temporals.format(a.agendamento_data, 'dd/MM/yyyy')}"></a></td>
+						<td><a th:text="${#temporals.format(a.agendamento_hora, 'HH:mm')}"></a></td>
 						<td><a th:text="${a.primeira_vez == 1} ? 'SIM' : 'NÃO' "></a></td>
 						<td><a th:text="${a.compareceu == 1} ? 'SIM' : 'NÃO' "></a></td>
-						<td th:if="${a.observacao != null}">
+						<td th:if="${a.agendamento_observacao != null}">
                          <a href="#"  title="Cliquei aqui para mostrar as informações sobre esse agendamento" data-toggle="modal" data-target="#modalObservacao" th:attr="data-observacao=${a.observacao}"> Observações</a>
                                 </td>
 					</tr>
@@ -38,20 +38,20 @@
 			</table>
 		</div>
 		 
-		<div th:if="${agenda.totalPages > 0}">
+		<div th:if="${paginacao.totalPages > 0}">
 			<nav aria-label="Page navigation example">
 				<ul class="pagination justify-content-center">
-					<li class="page-item" th:if="${agenda.hasPrevious()}">
+					<li class="page-item" th:if="${paginacao.hasPrevious()}">
 						<a class="page-link" onclick="primeiraPagina()" href="#"> 
 							<span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
 						</a>
 					</li>
-					<li class="page-item"  th:each="p : ${pageNumbers}" th:classappend="${p==agenda.pageable.pageNumber + 1} ? active">
+					<li class="page-item"  th:each="p : ${pageNumbers}" th:classappend="${p==paginacao.pageable.pageNumber + 1} ? active">
 						<a class="page-link" th:text=${p} onclick="mudaPágina(this)" href="#"> </a>
 					</li>
-					<li class="page-item" th:if="${agenda.hasNext()}">
+					<li class="page-item" th:if="${paginacao.hasNext()}">
 						<a class="page-link" onclick="ultimaPagina()" href="#"> 
-							<input type="hidden" id="ultimaPagina" th:value="${agenda.totalPages}">
+							<input type="hidden" id="ultimaPagina" th:value="${paginacao.totalPages}">
 							<span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span>
 						</a>
 					</li>
