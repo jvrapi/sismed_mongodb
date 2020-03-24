@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.Login;
+import br.com.sismed.mongodb.domain.Perfil;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
@@ -71,12 +72,20 @@ public class FuncionarioController extends AbstractController{
 
 	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
-
-		Funcionario func = service.ultimoRegistro();
-		Login l = new Login();
-		l.setSenha(new BCryptPasswordEncoder().encode(funcionario.getLogin().getSenha()));
 		
-		funcionario.setLogin(l);
+		Funcionario func = service.ultimoRegistro();
+
+		
+		Perfil p = new Perfil();
+		if(funcionario.getCrm() == null) {
+			p.setDesc("FUNCIONARIO");
+		}else {
+			p.setDesc("MEDICO");
+		}
+		funcionario.setPerfil(p);
+		
+		
+		
 		
 		Long matricula;
 

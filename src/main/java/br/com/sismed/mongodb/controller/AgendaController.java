@@ -139,7 +139,7 @@ public class AgendaController extends AbstractController {
 			la.setCompareceu(a.getCompareceu());
 			/* Informaçãos do paciente */
 			la.setPaciente_id(p.getId());
-			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_matricula(p.getProntuario());
 			la.setPaciente_celular(p.getCelular());
 
 			la.setPaciente_telefone(p.getTelefone_fixo());
@@ -180,7 +180,7 @@ public class AgendaController extends AbstractController {
 			la.setCompareceu(a.getCompareceu());
 			/* Informaçãos do paciente */
 			la.setPaciente_id(p.getId());
-			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_matricula(p.getProntuario());
 			la.setPaciente_celular(p.getCelular());
 
 			la.setPaciente_telefone(p.getTelefone_fixo());
@@ -221,7 +221,7 @@ public class AgendaController extends AbstractController {
 			la.setCompareceu(a.getCompareceu());
 			/* Informaçãos do paciente */
 			la.setPaciente_id(p.getId());
-			la.setPaciente_matricula(p.getMatricula());
+			la.setPaciente_matricula(p.getProntuario());
 			la.setPaciente_celular(p.getCelular());
 
 			la.setPaciente_telefone(p.getTelefone_fixo());
@@ -380,7 +380,7 @@ public class AgendaController extends AbstractController {
 	@GetMapping("/preCadastro")
 	public String preCadastro(Agenda agenda, Paciente paciente, ModelMap model) {
 		Paciente p = pacienteService.lastPaciente();
-		Long prontuario = p.getMatricula();
+		Long prontuario = p.getProntuario();
 		prontuario += 1;
 
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());

@@ -78,24 +78,24 @@
                         <tbody th:each="p : ${paciente}">
                             <tr class="conteudo" style="font-size: 1em;">
                                 <td style="width: 110px;">
-                                    <a th:text="${p.matricula}"></a>
+                                    <a th:text="${p.paciente_prontuario}"></a>
                                 </td>
                                 <td style="width: 350px;">
-                                	<a th:href="@{/pacientes/editar/{id} (id=${p.id}) }" th:text="${p.nome}"></a>
+                                	<a th:href="@{/pacientes/editar/{id} (id=${p.id}) }" th:text="${p.paciente_nome}"></a>
                                 </td>
                                 <td>
-                                    <a th:text="${p.rg}"></a>
+                                    <a th:text="${p.paciente_rg}"></a>
                                 </td>
                                 <td>
-                                    <a th:text="${p.cpf}"></a>
+                                    <a th:text="${p.paciente_cpf}"></a>
                                 </td>
-                                <td> <a th:text="${p.tipo_convenio.convenio.nome}" /></a>
+                                <td> <a th:text="${p.paciente_tipo_convenio}" /></a>
                                 </td>
-                                <td> <a th:text="${p.tipo_convenio.nome}" /></a>
+                                <td> <a th:text="${p.paciente_convenio}" /></a>
                                 </td>
-                                <td> <a th:text="${p.telefone_fixo}" /></a>
+                                <td> <a th:text="${p.paciente_telefone}" /></a>
                                 </td>
-                                <td> <a th:text="${p.celular}" /></a>
+                                <td> <a th:text="${p.paciente_celular}" /></a>
                                 </td>
                             </tr>
                         </tbody>

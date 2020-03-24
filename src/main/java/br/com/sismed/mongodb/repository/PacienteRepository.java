@@ -13,7 +13,7 @@ public interface PacienteRepository extends MongoRepository<Paciente, String> {
 
 	Paciente findTopByOrderByIdDesc();
 
-	List<Paciente> findByMatricula(Long dado);
+	List<Paciente> findByProntuario(Long dado);
 
 	@Query("{ 'nome' : { '$regex' : ?0 , $options: 'i'}}")
 	List<Paciente> findByNomeRegex(String dado);

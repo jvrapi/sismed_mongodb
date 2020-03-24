@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.LabelValue;
+import br.com.sismed.mongodb.domain.ListPaciente;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
@@ -39,7 +40,23 @@ public class PacienteController extends AbstractController{
 	@GetMapping("/listar")
 	public String buscarTodos(ModelMap model) {
 		List<Paciente> paciente = pService.buscarTodos();
-		model.addAttribute("paciente", paciente);
+		List<ListPaciente> listaPacientes = new ArrayList<ListPaciente>();
+		for(Paciente p : paciente) {
+			TConvenio tc = tcService.buscarPorId(p.getTipo_convenio()).get();
+			Convenio c = cService.buscarPorId(tc.getConvenio()).get();
+			ListPaciente lp = new ListPaciente();
+			lp.setId(p.getId());
+			lp.setPaciente_prontuario(p.getProntuario());
+			lp.setPaciente_nome(p.getNome());
+			lp.setPaciente_rg(p.getRg());
+			lp.setPaciente_cpf(p.getCpf());
+			lp.setPaciente_convenio(c.getNome());
+			lp.setPaciente_tipo_convenio(tc.getNome());
+			lp.setPaciente_telefone(p.getTelefone_fixo());
+			lp.setPaciente_celular(p.getCelular());
+			listaPacientes.add(lp);
+		}
+		model.addAttribute("paciente", listaPacientes);
 		return "/pacientes/lista";
 	}
 	

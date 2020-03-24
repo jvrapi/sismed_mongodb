@@ -11,7 +11,7 @@ public class Paciente extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long matricula;
+	private Long prontuario;
 
 	private String nome;
 
@@ -60,12 +60,14 @@ public class Paciente extends AbstractEntity {
 
 	private Endereco endereco;
 
-	public Long getMatricula() {
-		return matricula;
+	
+
+	public Long getProntuario() {
+		return prontuario;
 	}
 
-	public void setMatricula(Long matricula) {
-		this.matricula = matricula;
+	public void setProntuario(Long prontuario) {
+		this.prontuario = prontuario;
 	}
 
 	public String getNome() {

@@ -24,10 +24,10 @@ public class PacienteService {
 	public void salvar(Paciente paciente) {
 		Paciente lastPaciente = lastPaciente();
 		if (lastPaciente != null) {
-			Long matricula = lastPaciente.getMatricula() + 1;
-			paciente.setMatricula(matricula);
+			Long matricula = lastPaciente.getProntuario() + 1;
+			paciente.setProntuario(matricula);
 		} else {
-			paciente.setMatricula(1L);
+			paciente.setProntuario(1L);
 		}
 		pRepository.save(paciente);
 	}
@@ -48,7 +48,7 @@ public class PacienteService {
 	
 	public List<Paciente> ListarPacId(String dado) {
 		Long matricula = Long.parseLong(dado);
-		return pRepository.findByMatricula(matricula);
+		return pRepository.findByProntuario(matricula);
 	}
 	
 	
