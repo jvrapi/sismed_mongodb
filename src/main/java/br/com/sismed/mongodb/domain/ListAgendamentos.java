@@ -150,4 +150,32 @@ public class ListAgendamentos extends AbstractEntity {
 		return agendamento.isBefore(dataAtual);
 
 	}
+	
+	public int calcularIdade(LocalDate nascimento) {
+	
+		LocalDate dataAtual = LocalDate.now();
+
+		// Dados da data atual
+		int anoAtual = dataAtual.getYear();
+		int mesAtual = dataAtual.getMonthValue();
+		int diaAtual = dataAtual.getDayOfWeek().ordinal();
+
+		// Dados do paciente
+		int anoPaciente = nascimento.getYear();
+		int mesPaciente = nascimento.getMonthValue();
+		int diaPaciente = nascimento.getDayOfWeek().ordinal();
+
+		int idade = anoAtual - anoPaciente;
+
+		if (mesAtual < mesPaciente) {
+			idade--;
+		} else if (mesAtual == mesPaciente) {
+			if (diaAtual < diaPaciente) {
+				idade--;
+			}
+		}
+
+		return idade;
+
+	}
 }

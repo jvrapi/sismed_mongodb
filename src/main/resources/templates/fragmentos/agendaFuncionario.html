@@ -63,7 +63,7 @@
                                     <a title="Mostrar informações" class="classid"> <strong> PENDENTE </strong></a>
                                 </td>
                                 <td th:if="${a.paciente_nascimento != null}">
-                                    <a th:text="${a.paciente.calcularIdade(a.paciente.data_nascimento)} + ' ANOS'  "></a>
+                                    <a th:text="${a.calcularIdade(a.paciente_nascimento)} + ' ANOS'  "></a>
                                 </td>
 
                                 <td th:if="${a.agendamento_observacao != null}">

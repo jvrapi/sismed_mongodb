@@ -43,6 +43,7 @@ public class PacienteController extends AbstractController{
 		List<ListPaciente> listaPacientes = new ArrayList<ListPaciente>();
 		for(Paciente p : paciente) {
 			TConvenio tc = tcService.buscarPorId(p.getTipo_convenio()).get();
+			
 			Convenio c = cService.buscarPorId(tc.getConvenio()).get();
 			ListPaciente lp = new ListPaciente();
 			lp.setId(p.getId());
@@ -69,7 +70,7 @@ public class PacienteController extends AbstractController{
 	@PostMapping("/salvar")
 	public String salvar(Paciente paciente, RedirectAttributes attr) {
 		pService.salvar(paciente);
-		System.out.println(paciente.getTipo_convenio().getConvenio().getNome());
+		
 		attr.addFlashAttribute("sucesso", "Paciente cadastrado com sucesso");
 		return "redirect:/pacientes/listar";
 	}
@@ -77,8 +78,10 @@ public class PacienteController extends AbstractController{
 	@GetMapping("/editar/{id}")
 	public String preEditar(@PathVariable("id") String id, ModelMap model) {
 		Paciente paciente = pService.buscarPorId(id).get();
+		TConvenio tipoPaciente = tcService.buscarPorId(paciente.getTipo_convenio()).get();
+		Convenio convenioPaciente = cService.buscarPorId(tipoPaciente.getConvenio()).get();
 		model.addAttribute("paciente", paciente);
-		model.addAttribute("tipoconvenio", tcService.listarTodos(paciente.getTipo_convenio().getConvenio().getId()));
+		model.addAttribute("tipoconvenio", tcService.listarTodos(convenioPaciente.getId()));
 		return "pacientes/editar";		
 	}
 	

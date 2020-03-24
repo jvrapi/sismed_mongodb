@@ -151,7 +151,7 @@ public class AgendaController extends AbstractController {
 
 		}
 		model.addAttribute("agendamentos", ListAgendamentos);
-		
+
 		return "fragmentos/agendaFuncionario :: resultsList";
 	}
 
@@ -248,7 +248,7 @@ public class AgendaController extends AbstractController {
 		Convenio convenioPaciente = convenioService.buscarPorId(pacienteTipoConvenio.getConvenio()).get();
 		String funcionario_id = agendamento.getFuncionario();
 		String convenio_id = convenioAgendamento.getId();
-		
+
 		Funcionario medico = funcionarioService.buscarporId(funcionario_id).get();
 		List<Convenio> conveniosAceitos = new ArrayList<Convenio>();
 		List<TConvenio> medicoTipos = new ArrayList<TConvenio>();
@@ -303,7 +303,7 @@ public class AgendaController extends AbstractController {
 					+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
 			logService.salvar(l);
 		}
-		if(agenda.getObservacao().isEmpty()) {
+		if (agenda.getObservacao().isEmpty()) {
 			agenda.setObservacao(null);
 		}
 		service.salvar(agenda);
@@ -380,9 +380,12 @@ public class AgendaController extends AbstractController {
 	@GetMapping("/preCadastro")
 	public String preCadastro(Agenda agenda, Paciente paciente, ModelMap model) {
 		Paciente p = pacienteService.lastPaciente();
-		Long prontuario = p.getProntuario();
-		prontuario += 1;
-
+		Long prontuario;
+		if (p == null) {
+			prontuario = 1L;
+		} else {
+			prontuario = p.getProntuario() + 1;
+		}
 		model.addAttribute("funcionario", funcionarioService.buscarMedicos());
 		model.addAttribute("prontuario", prontuario);
 
@@ -391,16 +394,19 @@ public class AgendaController extends AbstractController {
 
 	@PostMapping("/salvarPreCadastro")
 	public String salvarPreCadastro(Agenda agenda, Paciente paciente, RedirectAttributes attr) {
+		paciente.setTipo_convenio(agenda.getTipo_convenio());
+		paciente.setSituacao("A");
+		pacienteService.salvar(paciente);
+
 		agenda.setPrimeira_vez(1L);
 		agenda.setPagou(1L);
 		agenda.setCompareceu(1L);
 		agenda.setPaciente(paciente.getId());
-		paciente.setTipo_convenio(agenda.getTipo_convenio());
-		paciente.setSituacao("A");
+		service.salvar(agenda);
+		
 		DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		String dataAgendada = agenda.getData().format(formatador);
-		pacienteService.salvar(paciente);
-		service.salvar(agenda);
+
 		attr.addFlashAttribute("sucesso", "Paciente Agendado para o dia " + dataAgendada + " As " + agenda.getHora());
 		return "redirect:/agenda/agendamentos";
 	}
@@ -448,8 +454,8 @@ public class AgendaController extends AbstractController {
 
 		Page<Agenda> agendamentos = service.agendamentosAnteriores(id, pagerequest);
 		List<ListAgendamentos> agendamentosAnteriores = new ArrayList<ListAgendamentos>();
-		
-		for(Agenda a : agendamentos) {
+
+		for (Agenda a : agendamentos) {
 			ListAgendamentos la = new ListAgendamentos();
 			Funcionario f = funcionarioService.buscarporId(a.getFuncionario()).get();
 			la.setMedico_nome(f.getNome());
