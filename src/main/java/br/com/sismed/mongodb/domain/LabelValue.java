@@ -2,9 +2,9 @@ package br.com.sismed.mongodb.domain;
 
 
 public class LabelValue {
-	private Long convenio;
-	private Long tipo;
-	private Long value;
+	private String convenio;
+	private String tipo;
+	private String value;
 	private String label;
 	private String nome_tipo;
 	private String nome_convenio;
@@ -16,22 +16,22 @@ public class LabelValue {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	public Long getValue() {
+	public String getValue() {
 		return value;
 	}
-	public void setValue(Long value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
-	public Long getConvenio() {
+	public String getConvenio() {
 		return convenio;
 	}
-	public void setConvenio(Long convenio) {
+	public void setConvenio(String convenio) {
 		this.convenio = convenio;
 	}
-	public Long getTipo() {
+	public String getTipo() {
 		return tipo;
 	}
-	public void setTipo(Long tipo) {
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 	public String getNome_tipo() {

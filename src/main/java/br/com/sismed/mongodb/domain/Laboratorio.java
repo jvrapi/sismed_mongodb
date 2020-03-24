@@ -1,5 +1,6 @@
 package br.com.sismed.mongodb.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +23,7 @@ public class Laboratorio extends AbstractEntity{
 	
 	private Endereco endereco;
 	
-    Set<LabTConv> lab;
+    List<String> tipo_convenio;
 	
 	public String getCnpj() {
 		return cnpj;
@@ -71,5 +72,15 @@ public class Laboratorio extends AbstractEntity{
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
+
+	public List<String> getTipo_convenio() {
+		return tipo_convenio;
+	}
+
+	public void setTipo_convenio(List<String> tipo_convenio) {
+		this.tipo_convenio = tipo_convenio;
+	}
+	
+	
 	
 }
