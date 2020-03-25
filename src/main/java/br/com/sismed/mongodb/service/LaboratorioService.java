@@ -19,36 +19,38 @@ public class LaboratorioService {
 
 	@Autowired
 	private LaboratorioRepository repository;
-	
+
 	@Autowired
 	private TConvenioService tipoConvenioService;
-	
-	
+
 	@Transactional(readOnly = true)
-	public List<Laboratorio> buscarTodos(){
+	public List<Laboratorio> buscarTodos() {
 		return repository.findAll();
 	}
-	
-	
+
 	@Transactional(readOnly = true)
 	public Optional<Laboratorio> buscarPorId(String id) {
 		return repository.findById(id);
 	}
 
-
+	@Transactional(readOnly = false)
 	public void salvar(Laboratorio laboratorio) {
 		TConvenio tipo = tipoConvenioService.buscarPorNome("particular");
 		List<String> tipos = new ArrayList<String>();
 		tipos.add(tipo.getId());
 		laboratorio.setTipo_convenio(tipos);
 		repository.save(laboratorio);
-		
+
 	}
 
+	@Transactional(readOnly = false)
+	public void editar(Laboratorio laboratorio) {
+		repository.save(laboratorio);
+	}
 
 	@Transactional(readOnly = true)
 	public Page<Laboratorio> buscarTodos(Pageable pageable) {
-		
+
 		return repository.findAll(pageable);
 	}
 }

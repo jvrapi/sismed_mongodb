@@ -21,6 +21,11 @@ public class TConvenioService {
 	public List<TConvenio> listarTodos(String id) {
 		return repository.findByConvenio(id);
 	}
+	
+	@Transactional(readOnly = true)
+	public List<TConvenio> findAll() {
+		return repository.findAll();
+	}
 
 	@Transactional(readOnly = true)
 	public Optional<TConvenio> buscarPorId(String id) {
@@ -41,5 +46,6 @@ public class TConvenioService {
 	public TConvenio buscarPorNome(String nome) {
 		return repository.findByNome(nome);
 	}
+	
 
 }
