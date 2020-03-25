@@ -31,7 +31,7 @@ import br.com.sismed.mongodb.service.TConvenioService;
 
 @Controller
 @RequestMapping("/laboratorio")
-public class LaboratorioController {
+public class LaboratorioController extends AbstractController{
 	
 	@Autowired
 	private LaboratorioService laboratorioService;
@@ -106,10 +106,21 @@ public class LaboratorioController {
 	public String preEditar(@PathVariable("id") String id, ModelMap model, @ModelAttribute("labtconv") LabTConv labtconv) {
 		Laboratorio laboratorio = laboratorioService.buscarPorId(id).get();
 		List<Convenio> conveniosLaboratorio = new ArrayList<Convenio>();
+		String convenioInserido = "";
 		for(String tc : laboratorio.getTipo_convenio()) {
 			TConvenio tipos = tipoConvenioService.buscarPorId(tc).get();
 			Convenio convenio = convenioService.buscarPorId(tipos.getConvenio()).get();
-			conveniosLaboratorio.add(convenio);
+			if(conveniosLaboratorio.isEmpty()) {
+				convenioInserido = convenio.getId();
+				conveniosLaboratorio.add(convenio);
+			}else if(!convenio.getId().equals(convenioInserido)) {
+				convenioInserido = convenio.getId();
+				conveniosLaboratorio.add(convenio);
+			}
+			
+			
+			
+			
 			
 		}
 		model.addAttribute("laboratorio", laboratorio);
@@ -119,16 +130,26 @@ public class LaboratorioController {
 	}
 	
 	@GetMapping("/convenio/{id}/{labId}")
-	public @ResponseBody List<TConvenio> listTipoConvenio(@PathVariable("id") Long id, @PathVariable("labId") Long labId) {
-		return tipoConvenioService.BuscarTConvenioLab(id, labId);
+	public @ResponseBody List<TConvenio> listTipoConvenio(@PathVariable("id") String convenioId, @PathVariable("labId") String labId) {
+		Laboratorio laboratorio = laboratorioService.buscarPorId(labId).get();
+		List<TConvenio> tiposAceitos = new ArrayList<TConvenio>();
+		for(String tipos : laboratorio.getTipo_convenio()) {
+			TConvenio tc = tipoConvenioService.buscarPorId(tipos).get();
+			if(tc.getConvenio().equals(convenioId)) {
+				tiposAceitos.add(tc);
+			}
+		}
+		
+		
+		return tiposAceitos;
 	}
 	
-	@GetMapping("/allconvenios/{id}/{labId}")
+	/*@GetMapping("/allconvenios/{id}/{labId}")
 	public @ResponseBody List<TConvenio> listAllTipoConvenio(@PathVariable("id") Long id, @PathVariable("labId") Long labId) {
 		return tipoConvenioService.ListaComboBoxLab(id, labId);
 	}
 	
-	/*@GetMapping("/excluirTConv/{id}/{labId}")
+	@GetMapping("/excluirTConv/{id}/{labId}")
 	@ResponseBody
 	public void excluirTConv(@PathVariable("id") Long id, @PathVariable("labId") Long labId) {
 		ltcService.excluir(id, labId);
