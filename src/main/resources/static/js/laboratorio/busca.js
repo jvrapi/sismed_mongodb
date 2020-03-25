@@ -14,6 +14,7 @@ $(document).ready(function() {
 			
 			function muda2() {
 				$('#txtBusca').unmask();
+				$('#txtBusca').val("");
 				$("#dropdownMenu2").text("Nome");
 				$("#dropdownMenu2").val("2");
 				$( function() {
@@ -31,6 +32,7 @@ $(document).ready(function() {
 			
 			function muda3() {
 				$('#txtBusca').unmask();
+				$('#txtBusca').val("");
 				$('#txtBusca').mask('(00) 0000-0000');  
 				$("#dropdownMenu2").text("Telefone");
 				$("#dropdownMenu2").val("3");
@@ -49,6 +51,7 @@ $(document).ready(function() {
 			
 			function muda4() {
 				$('#txtBusca').unmask();  
+				$('#txtBusca').val("");
 				$("#dropdownMenu2").text("Bairro");
 				$("#dropdownMenu2").val("4");
 				$( function() {

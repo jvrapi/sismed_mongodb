@@ -15,16 +15,16 @@ public interface PacienteRepository extends MongoRepository<Paciente, String> {
 
 	List<Paciente> findByProntuario(Long dado);
 
-	@Query("{ 'nome' : { '$regex' : ?0 , $options: 'i'}}")
+	@Query("{ 'nome' : { $regex : '?0' , $options: 'i'}}")
 	List<Paciente> findByNomeRegex(String dado);
 
-	@Query("{ 'cpf' : { '$regex' : ?0 , $options: 'i'}}")
+	@Query("{ 'cpf' : { $regex : '?0' , $options: 'i'}}")
 	List<Paciente> findByCpfRegex(String dado);
 
-	@Query("{ 'telefone_fixo' : { '$regex' : ?0 , $options: 'i'}}")
-	List<Paciente> findByTelefone_fixoRegex(String dado);
+	@Query("{ 'telefone_fixo' : { $regex : '?0' , $options: 'i'}}")
+	List<Paciente> findByTelefone_fixo(String dado);
 
-	@Query("{ 'celular' : { '$regex' : ?0 , $options: 'i'}}")
+	@Query("{ 'celular' : { $regex : '?0' , $options: 'i'}}")
 	List<Paciente> findByCelularRegex(String dado);
 
 }

@@ -53,4 +53,23 @@ public class LaboratorioService {
 
 		return repository.findAll(pageable);
 	}
+
+	@Transactional(readOnly = false)
+	public void excluir(String laboratorioId) {
+		repository.deleteById(laboratorioId);
+
+	}
+
+	@Transactional(readOnly = true)
+	public List<Laboratorio> ListarLaboratorioNome(String term) {
+		return repository.findByNome(term);
+	}
+
+	public List<Laboratorio> ListarLaboratorioTelefone(String term) {
+		return repository.findByTelefone(term);
+	}
+
+	public List<Laboratorio> ListarLaboratorioBairro(String term) {
+		return repository.findByBairro(term);
+	}
 }

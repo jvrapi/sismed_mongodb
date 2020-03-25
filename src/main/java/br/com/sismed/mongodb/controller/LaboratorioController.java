@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
-import br.com.sismed.mongodb.domain.LabTConv;
+import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.Laboratorio;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
@@ -79,6 +78,44 @@ public class LaboratorioController extends AbstractController {
 		}
 
 		return "laboratorio/lista";
+	}
+	
+	@GetMapping("/buscar/{id}")
+	@ResponseBody
+	public List<LabelValue> buscar (@PathVariable("id")Integer id, @RequestParam (value="term", required=false, defaultValue="") String term){
+		List<LabelValue> suggeestions = new ArrayList<LabelValue>();
+		
+		if(id == 2) {
+			List<Laboratorio> allLaboratorio = laboratorioService.ListarLaboratorioNome(term);
+			for (Laboratorio laboratorio : allLaboratorio) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(laboratorio.getNome());
+				lv.setValue(laboratorio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		
+		else if(id == 3) {
+			List<Laboratorio> allLaboratorio = laboratorioService.ListarLaboratorioTelefone(term);
+			for (Laboratorio laboratorio : allLaboratorio) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(laboratorio.getNome());
+				lv.setValue(laboratorio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		
+		else if(id == 4) {
+			List<Laboratorio> allLaboratorio = laboratorioService.ListarLaboratorioBairro(term);
+			for (Laboratorio laboratorio : allLaboratorio) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(laboratorio.getNome());
+				lv.setValue(laboratorio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		
+		return suggeestions;
 	}
 
 	@GetMapping("/cadastrar")
@@ -167,6 +204,12 @@ public class LaboratorioController extends AbstractController {
 		return "redirect:/laboratorio/editar/" + labId;
 	}
 
+	@GetMapping("/excluir/{id}")
+	public String excluir(@PathVariable("id") String laboratorioId, RedirectAttributes attr) {
+		laboratorioService.excluir(laboratorioId);
+		attr.addFlashAttribute("sucesso", "Laboratorio excluido com sucesso");
+		return "redirect:/laboratorio/listar";
+	}
 	/*
 	 * @GetMapping("/excluirTConv/{id}/{labId}")
 	 * 

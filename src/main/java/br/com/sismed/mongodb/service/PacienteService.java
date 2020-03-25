@@ -63,7 +63,7 @@ public class PacienteService {
 
 	
 	public List<Paciente> PesquisarTelefone(String dado) {
-		return  pRepository.findByTelefone_fixoRegex(dado);
+		return  pRepository.findByTelefone_fixo(dado);
 	}
 	
 	public List<Paciente> PesquisarCelular(String dado) {
