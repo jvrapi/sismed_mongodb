@@ -19,4 +19,7 @@ public interface LaboratorioRepository extends MongoRepository<Laboratorio, Stri
 	
 	@Query("{ 'telefone_fixo' : { $regex : '?0' , $options: 'i'}}")
 	List<Laboratorio> findByTelefone(String nome);
+
+	@Query("{'tipo_convenio' : ?0 }")
+	List<Laboratorio> listarLaboratorioPorTipoConvenio(String id);
 }

@@ -17,7 +17,7 @@ public class Log extends AbstractEntity {
 
 	private LocalTime hora;
 
-	private Funcionario funcionario_id;
+	private String funcionario_id;
 
 	private String descricao;
 
@@ -37,11 +37,11 @@ public class Log extends AbstractEntity {
 		this.hora = hora;
 	}
 
-	public Funcionario getFuncionario_id() {
+	public String getFuncionario_id() {
 		return funcionario_id;
 	}
 
-	public void setFuncionario_id(Funcionario funcionario_id) {
+	public void setFuncionario_id(String funcionario_id) {
 		this.funcionario_id = funcionario_id;
 	}
 

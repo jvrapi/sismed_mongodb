@@ -72,4 +72,8 @@ public class LaboratorioService {
 	public List<Laboratorio> ListarLaboratorioBairro(String term) {
 		return repository.findByBairro(term);
 	}
+
+	public List<Laboratorio> ListarLabTConv(String id) {
+		return repository.listarLaboratorioPorTipoConvenio(id);
+	}
 }

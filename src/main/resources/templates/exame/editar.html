@@ -88,17 +88,17 @@
 
                             <div class="form-group col-md-3">
                                 <label for="paciente">Paciente</label>
-                                <input type="text" class="form-control tamanho-fonte" id="paciente" autofocus="autofocus" th:value="*{paciente_id.nome}" disabled/>
+                                <input type="text" class="form-control tamanho-fonte" id="paciente" autofocus="autofocus" th:value="${paciente.nome}" disabled/>
                                 <input type="hidden" th:field="*{paciente_id}">
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="convenio">Convênio</label>
-                                <input type="text" class="form-control tamanho-fonte" id="convenio" th:value="*{tipo.convenio.nome}" autofocus="autofocus" disabled/>
+                                <input type="text" class="form-control tamanho-fonte" id="convenio" th:value="${convenio.nome}" autofocus="autofocus" disabled/>
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="tipo">Tipo de Convênio</label>
-                                <input type="text" class="form-control tamanho-fonte" id="tipo" autofocus="autofocus" th:value="*{tipo.nome}" disabled/>
+                                <input type="text" class="form-control tamanho-fonte" id="tipo" autofocus="autofocus" th:value="${tipoConvenio.nome}" disabled/>
                                 <input type="hidden" th:field="*{tipo}" id="tipo_id">
 
                             </div>
@@ -134,7 +134,7 @@
 
                             <div class="form-group col-md-3">
                                 <label for="funcionario">Quem Enviou</label>
-                                <input type="text" class="form-control tamanho-fonte" id="funcionario" autofocus="autofocus" th:value="*{funcionario_id.nome}" disabled/>
+                                <input type="text" class="form-control tamanho-fonte" id="funcionario" autofocus="autofocus" th:value="${funcionario.nome}" disabled/>
                                 <input type="hidden" th:field="*{funcionario_id}">
                             </div>
 
