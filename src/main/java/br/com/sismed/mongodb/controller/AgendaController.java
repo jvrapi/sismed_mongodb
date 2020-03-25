@@ -297,7 +297,7 @@ public class AgendaController extends AbstractController {
 			Funcionario f = funcionarioService.buscarPorCpf(user.getUsername());
 			DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(f);
+			l.setFuncionario_id(f.getId());
 			l.setHora(LocalTime.now());
 			l.setDescricao("ALTERAÇÃO NA DATA DE AGENDAMENTO: NOME DO PACIENTE: " + paciente.getNome() + ". DO DIA "
 					+ a.getData().format(formatador) + " PARA O DIA " + agenda.getData().format(formatador));
