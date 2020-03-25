@@ -210,13 +210,15 @@ public class LaboratorioController extends AbstractController {
 		attr.addFlashAttribute("sucesso", "Laboratorio excluido com sucesso");
 		return "redirect:/laboratorio/listar";
 	}
-	/*
-	 * @GetMapping("/excluirTConv/{id}/{labId}")
-	 * 
-	 * @ResponseBody public void excluirTConv(@PathVariable("id") Long
-	 * id, @PathVariable("labId") Long labId) { ltcService.excluir(id, labId); }
-	 * 
-	 * 
-	 */
+	
+	@GetMapping("/excluirTConv/{id}/{labId}")
+	@ResponseBody
+	public void excluirTConv(@PathVariable("id") String id, @PathVariable("labId") String labId) {
+		Laboratorio laboratorio = laboratorioService.buscarPorId(labId).get();
+		if(laboratorio.getTipo_convenio().contains(id)) {
+			laboratorio.getTipo_convenio().remove(id);
+		}
+		laboratorioService.editar(laboratorio);
+	}
 
 }
