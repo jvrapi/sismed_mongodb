@@ -1,9 +1,12 @@
 package br.com.sismed.mongodb.controller;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.Document;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +14,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.service.FuncionarioService;
@@ -34,6 +44,8 @@ public class HomeController{
 	         // mensagem de erro
 	    	  model.addAttribute("usuario",  funcionario.getNome());
 	      }
+		
+		 
 		return "home";
 	}
 
@@ -63,4 +75,8 @@ public class HomeController{
 
 		return "error";
 	}
+	
+
 }
+
+

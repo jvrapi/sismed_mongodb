@@ -115,7 +115,7 @@ public class FuncionarioController extends AbstractController{
 		if(funcionario.getCrm() != null) {
 			if(!funcionario.getTconvenio().isEmpty()) {
 				for(String tipos: funcionario.getTconvenio()) {
-					System.out.println(tipos);
+					
 					tc = tcService.buscarPorId(tipos).get();
 					if(listConvenio.isEmpty()) {
 						convenioInserido = tc.getConvenio();
@@ -221,9 +221,12 @@ public class FuncionarioController extends AbstractController{
 	
 	@PostMapping("/excluirTConv")
 	public String excluirTConv(@RequestParam("idModalExcluir") String funcId, @RequestParam("tconvenio") List<TConvenio> tconvenios) {
+		Funcionario medico = service.buscarporId(funcId).get();
+		
 		for (TConvenio tConvenio : tconvenios) {
-			service.apagarTConv(funcId, tConvenio.getId());
+			medico.getTconvenio().remove(tConvenio.getId());
 		}
+		service.salvar(medico);
 		return "redirect:/funcionario/editar/" + funcId;
 	}
 	
