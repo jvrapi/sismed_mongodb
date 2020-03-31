@@ -40,7 +40,7 @@ public class RClinicoService {
 
 	@Transactional(readOnly = true)
 	public Page<RegistroClinico> listarRegistros(String pacienteId, PageRequest pagerequest) {
-		return rcRepository.findByPaciente_id(pacienteId, pagerequest);
+		return rcRepository.findByPaciente(pacienteId, pagerequest);
 	}
 	
 	@Transactional(readOnly = true)

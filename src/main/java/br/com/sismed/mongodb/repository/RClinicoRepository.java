@@ -11,7 +11,7 @@ import br.com.sismed.mongodb.domain.RegistroClinico;
 @Repository
 public interface RClinicoRepository extends MongoRepository<RegistroClinico, String>{
 
-	public Page<RegistroClinico> findByPaciente_id(String pacienteId, PageRequest pagerequest);
+	public Page<RegistroClinico> findByPaciente(String pacienteId, PageRequest pagerequest);
 	
 	RegistroClinico findTopByOrderByIdDesc();
 }

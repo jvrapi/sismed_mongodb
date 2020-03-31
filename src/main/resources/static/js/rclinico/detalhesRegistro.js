@@ -11,6 +11,7 @@ $(document).ready(function(){
 	var recientpacienteid = button.data('pacienteid');
 	var recipientfuncionarioid = button.data('funcionarioid');
 	var recipientagendamento = button.data('agendamento');
+	var recipientnumero = button.data('numero');
 	var modal = $(this);
 	modal.find("#recipient-id").val(recipientid);
 	modal.find('#recipient-name').val(recipientnome);
@@ -21,5 +22,6 @@ $(document).ready(function(){
 	modal.find("#recipient-pacienteid").val(recientpacienteid);
 	modal.find("#recipient-funcionarioid").val(recipientfuncionarioid);
 	modal.find("#recipient-agendamento").val(recipientagendamento);
+	modal.find("#recipient-numero").val(recipientnumero);
   });
 });

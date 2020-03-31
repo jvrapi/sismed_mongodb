@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.sismed.mongodb.domain.Agenda;
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
+import br.com.sismed.mongodb.domain.ListRegistroAnteriores;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.RegistroClinico;
 import br.com.sismed.mongodb.domain.TConvenio;
@@ -87,6 +89,7 @@ public class RClinicoController extends AbstractController{
 	@PostMapping("/salvar")
 	public String salvar(RegistroClinico registroclinico, RedirectAttributes attr) {
 		RegistroClinico ultimoRegistro = service.ultimoRegistro();
+		Paciente paciente = pacienteService.buscarPorId(registroclinico.getPaciente()).get();
 		Long numero;
 		if(ultimoRegistro != null) {
 			numero = ultimoRegistro.getNumero() + 1;
@@ -96,13 +99,41 @@ public class RClinicoController extends AbstractController{
 		registroclinico.setNumero(numero);
 		service.salvar(registroclinico);
 		attr.addFlashAttribute("success", "Registro cadastrado com sucesso");
-		return "redirect:/registroclinico/cadastrar/" + registroclinico.getPaciente().getId() + "/null";
+		return "redirect:/registroclinico/cadastrar/" + paciente.getId() + "/null";
 	}
 	
 	@GetMapping("/find/{id}")
 	public String find(ModelMap model, @RequestParam(value = "page", required=false, defaultValue="1") int page, @PathVariable("id") String id) {
 		PageRequest pagerequest = PageRequest.of(page-1, 4, Sort.by("id").descending());
 		Page<RegistroClinico> rclinico = service.listarRegistros(id, pagerequest);
+		List<ListRegistroAnteriores> registroAnteriores = new ArrayList<ListRegistroAnteriores>();
+		for(RegistroClinico registro: rclinico) {
+		
+			Paciente paciente = pacienteService.buscarPorId(registro.getPaciente()).get();
+			
+			Funcionario funcionario = funcionarioService.buscarporId(registro.getFuncionario_id()).get();
+			ListRegistroAnteriores ra = new ListRegistroAnteriores();
+			ra.setId(registro.getId());
+			ra.setNumero(registro.getNumero());
+			
+			ra.setDescricao(registro.getDescricao());
+			ra.setData(registro.getData());
+			ra.setHora(registro.getHora());
+			
+			ra.setFuncionario(funcionario);
+			ra.setPaciente(paciente);
+			
+			
+			if(registro.getAgendamento_id() != null) {
+				Agenda agendamento  = agendaService.buscarPorId(registro.getAgendamento_id()).get();
+				ra.setAgendamento(agendamento);
+				
+			}else {
+				ra.setAgendamento(null);
+			}
+			registroAnteriores.add(ra);
+		}
+		model.addAttribute("registroAnteriores", registroAnteriores);
 		model.addAttribute("registro", rclinico);
 		int totalPages = rclinico.getTotalPages();
 		if (totalPages == 1) {
@@ -163,12 +194,15 @@ public class RClinicoController extends AbstractController{
 	
 	@PostMapping("/editar")
 	public String editar(RegistroClinico registroclinico, RedirectAttributes attr) {
-		String id = registroclinico.getPaciente().getId();
+		Paciente paciente = pacienteService.buscarPorId(registroclinico.getPaciente()).get();
+		if(registroclinico.getAgendamento_id() == "") {
+			registroclinico.setAgendamento_id(null);
+		}
 		LocalTime agora = LocalTime.now();
 		registroclinico.setHora(agora);
 		service.salvar(registroclinico);
 		attr.addFlashAttribute("sucesso", "Registro alterado com sucesso");
-		return "redirect:/registroclinico/cadastrar/" + id + "/null";
+		return "redirect:/registroclinico/cadastrar/" + paciente.getId() + "/null";
 	}
 	
 	@GetMapping("/excluir/{id}/{pid}")

@@ -19,11 +19,11 @@ public class RegistroClinico extends AbstractEntity{
 	
 	private String descricao;
 	
-	private Paciente paciente;
+	private String paciente;
 	
-	private Funcionario funcionario_id;
+	private String funcionario_id;
 	
-	private Agenda agendamento_id;
+	private String agendamento_id;
 	
 	private Long numero;
 	
@@ -35,11 +35,11 @@ public class RegistroClinico extends AbstractEntity{
 		this.data = data;
 	}
 
-	public Agenda getAgendamento_id() {
+	public String getAgendamento_id() {
 		return agendamento_id;
 	}
 
-	public void setAgendamento_id(Agenda agendamento_id) {
+	public void setAgendamento_id(String agendamento_id) {
 		this.agendamento_id = agendamento_id;
 	}
 
@@ -59,19 +59,19 @@ public class RegistroClinico extends AbstractEntity{
 		this.descricao = descricao;
 	}
 
-	public Funcionario getFuncionario_id() {
+	public String getFuncionario_id() {
 		return funcionario_id;
 	}
 
-	public void setFuncionario_id(Funcionario funcionario_id) {
+	public void setFuncionario_id(String funcionario_id) {
 		this.funcionario_id = funcionario_id;
 	}
 
-	public Paciente getPaciente() {
+	public String getPaciente() {
 		return paciente;
 	}
 
-	public void setPaciente(Paciente paciente) {
+	public void setPaciente(String paciente) {
 		this.paciente = paciente;
 	}
 	
