@@ -78,7 +78,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-1">
                                 <label for="prontuário">Prontuário</label>
-                                <input type="text" class="form-control tamanho-fonte" id="id_paciente" th:value="${paciente.matricula}" style="cursor: default;box-shadow: 0 0 0 0; border: 1px solid lightgray;" readonly>
+                                <input type="text" class="form-control tamanho-fonte" id="id_paciente" th:value="${paciente.prontuario}" style="cursor: default;box-shadow: 0 0 0 0; border: 1px solid lightgray;" readonly>
                             	<input type="hidden" th:name="paciente" th:value="${paciente.id}" id="paciente_id">
                             </div>
                             <div class="form-group col-md-4">
@@ -87,11 +87,11 @@
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="convenio">Convênio</label>
-                                <input type="text" class="form-control tamanho-fonte" id="convênio" th:value="${paciente.tipo_convenio.convenio.nome}" disabled>
+                                <input type="text" class="form-control tamanho-fonte" id="convênio" th:value="${convenioPaciente.nome}" disabled>
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="tipo_convenio">Tipo de convênio</label>
-                                <input type="text" class="form-control tamanho-fonte" id="tipo_convenio" th:value="${paciente.tipo_convenio.nome}" disabled>
+                                <input type="text" class="form-control tamanho-fonte" id="tipo_convenio" th:value="${tipoConvenioPaciente.nome}" disabled>
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="data">Data</label>

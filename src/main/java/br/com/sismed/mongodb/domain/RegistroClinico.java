@@ -25,6 +25,8 @@ public class RegistroClinico extends AbstractEntity{
 	
 	private Agenda agendamento_id;
 	
+	private Long numero;
+	
 	public LocalDate getData() {
 		return data;
 	}
@@ -71,6 +73,14 @@ public class RegistroClinico extends AbstractEntity{
 
 	public void setPaciente(Paciente paciente) {
 		this.paciente = paciente;
+	}
+	
+	public Long getNumero() {
+		return numero;
+	}
+
+	public void setNumero(Long numero) {
+		this.numero = numero;
 	}
 
 	public int compararDatas(LocalDate rclinicoData) {

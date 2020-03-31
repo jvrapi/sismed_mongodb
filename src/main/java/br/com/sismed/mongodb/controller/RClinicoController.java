@@ -23,13 +23,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.sismed.mongodb.domain.Convenio;
+import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.RegistroClinico;
+import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.AgendaService;
+import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
 import br.com.sismed.mongodb.service.PacienteService;
 import br.com.sismed.mongodb.service.RClinicoService;
+import br.com.sismed.mongodb.service.TConvenioService;
 
 @Controller
 @RequestMapping("/registroclinico")
@@ -47,6 +52,12 @@ public class RClinicoController extends AbstractController{
 	@Autowired
 	private AgendaService agendaService;
 	
+	@Autowired
+	private TConvenioService tipoConvenioService;
+	
+	@Autowired
+	private ConvenioService convenioService;
+	
 	@GetMapping("/listar")
 	public String listar(RegistroClinico registroclinico, ModelMap model) {
 		model.addAttribute("registro", service.listar());
@@ -55,8 +66,15 @@ public class RClinicoController extends AbstractController{
 	
 	@GetMapping("/cadastrar/{id}/{agendamentoId}")
 	public String cadastro(@ModelAttribute("registroclinico") RegistroClinico registroclinico, @PathVariable("id") String id, @PathVariable("agendamentoId") String agendamentoId,  ModelMap model, @AuthenticationPrincipal User user) {
-		model.addAttribute("paciente", pacienteService.buscarPorId(id).get());
-		model.addAttribute("funcionario", funcionarioService.buscarPorCpf(user.getUsername()));
+		Paciente paciente =  pacienteService.buscarPorId(id).get();
+		Funcionario medico = funcionarioService.buscarPorCpf(user.getUsername());
+		TConvenio tipoConvenioPaciente = tipoConvenioService.buscarPorId(paciente.getTipo_convenio()).get();
+		Convenio convenioPaciente = convenioService.buscarPorId(tipoConvenioPaciente.getConvenio()).get();
+		
+		model.addAttribute("paciente",paciente);
+		model.addAttribute("funcionario", medico);
+		model.addAttribute("tipoConvenioPaciente", tipoConvenioPaciente);
+		model.addAttribute("convenioPaciente", convenioPaciente);
 		if(agendamentoId.equals("null")) {
 			model.addAttribute("agendamento", null);
 		}
@@ -68,6 +86,14 @@ public class RClinicoController extends AbstractController{
 	
 	@PostMapping("/salvar")
 	public String salvar(RegistroClinico registroclinico, RedirectAttributes attr) {
+		RegistroClinico ultimoRegistro = service.ultimoRegistro();
+		Long numero;
+		if(ultimoRegistro != null) {
+			numero = ultimoRegistro.getNumero() + 1;
+		}else {
+			numero = 1L;
+		}
+		registroclinico.setNumero(numero);
 		service.salvar(registroclinico);
 		attr.addFlashAttribute("success", "Registro cadastrado com sucesso");
 		return "redirect:/registroclinico/cadastrar/" + registroclinico.getPaciente().getId() + "/null";
