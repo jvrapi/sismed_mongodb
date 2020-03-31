@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-
+	<script type="text/javascript" src="/js/alerta.js"></script>
 </head>
 
 <body>
@@ -41,6 +41,7 @@
             </nav>
 
             <div class="container-fluid" style="width: 98%">
+            <div th:replace="fragmentos/alert" class="container"></div>
                 <div class="card ajustarCard">
                     <div class="card-body">
                         <form th:action="@{/backup/gerar}" method="post">

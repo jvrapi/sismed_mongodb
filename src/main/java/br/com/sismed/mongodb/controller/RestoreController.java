@@ -8,10 +8,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/restore")
@@ -32,16 +34,17 @@ public class RestoreController {
 	}
 	
 	@PostMapping
-	public String realizarRestore(@RequestParam("tabelas") List<String> tabelas, @RequestParam("data") String data) throws IOException {
+	public String realizarRestore(@RequestParam("tabelas") List<String> tabelas, @RequestParam("data") String data, RedirectAttributes attr, ModelMap model) throws IOException {
 
 		String caminho = "c:\\sismed\\backup\\" + data + "\\" + dataBase+"\\";
+		String retorno ="";
 		for (String t : tabelas) {
 			String arquivo = t + ".bson";
 			String dump = "mongorestore -u " + host+  " -p " + password + " --authenticationDatabase \"admin\" --db " + dataBase + " --collection " + t + " " + caminho + arquivo;
 			String[] comando = {"cd C:\\Program Files\\MongoDB\\Server\\4.2\\bin",dump};
 			
 			try {
-				System.out.println(dump);
+				
 				FileInputStream stream = new FileInputStream(caminho + arquivo);
 				InputStreamReader reader = new InputStreamReader(stream);
 				BufferedReader br = new BufferedReader(reader);
@@ -53,18 +56,17 @@ public class RestoreController {
 				ProcessBuilder builder = new ProcessBuilder("cmd", "/c", String.join("& ", comando));
 				builder.redirectErrorStream(true);
 				builder.start();
-
+				attr.addFlashAttribute("sucesso", "Dados restaurados com sucesso");
+				retorno = "redirect:/restore";
 			} catch (Exception a) {
-				 /*caminho = "E:\\sismed\\backup\\" + data + "\\automatico\\";
-				 dump = "mysql -u " + host + " -p" + password + " " + dataBase + " " + " < " + caminho + arquivo;
-				 ProcessBuilder builder = new ProcessBuilder("cmd", "/c", String.join("& ", comando));
-					builder.redirectErrorStream(true);
-					builder.start();*/
+				model.addAttribute("error", "Não foi possivel realizar a operação");
+				model.addAttribute("message", "Entre em contato com suporte para solucionar esse problema");
+				retorno = "error";
 				a.printStackTrace();
 			}
 		}
 
-		return "redirect:/restore";
+		return retorno;
 	}
 
 }
