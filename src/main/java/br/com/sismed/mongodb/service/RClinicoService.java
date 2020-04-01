@@ -47,5 +47,15 @@ public class RClinicoService {
 	public RegistroClinico ultimoRegistro() {
 		return rcRepository.findTopByOrderByIdDesc();
 	}
+	
+	@Transactional(readOnly = true)
+	public List<RegistroClinico> listarRegistrosPorPaciente(String paciente_id){
+		return rcRepository.findByPaciente(paciente_id);
+	}
+	
+	@Transactional(readOnly = true)
+	public RegistroClinico ultimoRegistroPaciente(String paciente_id) {
+		return rcRepository.findTopByPacienteOrderByIdDesc(paciente_id);
+	}
 
 }

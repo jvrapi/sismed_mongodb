@@ -28,6 +28,7 @@ import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.ListRegistroAnteriores;
+import br.com.sismed.mongodb.domain.ListRegistros;
 import br.com.sismed.mongodb.domain.Paciente;
 import br.com.sismed.mongodb.domain.RegistroClinico;
 import br.com.sismed.mongodb.domain.TConvenio;
@@ -62,7 +63,37 @@ public class RClinicoController extends AbstractController{
 	
 	@GetMapping("/listar")
 	public String listar(RegistroClinico registroclinico, ModelMap model) {
-		model.addAttribute("registro", service.listar());
+		List<RegistroClinico> allRegistros = service.listar();
+		List<ListRegistros> registrosPorPaciente = new ArrayList<ListRegistros>();
+		String pacienteId = ""; // Variavel auxiliar para verificar se o paciente já esta dentro do array de retorno para a pagina
+		/*Pecorre todos os registros clinicos para poder filtrar por paciente*/
+		for(RegistroClinico rc : allRegistros) {
+			Paciente paciente = pacienteService.buscarPorId(rc.getPaciente()).get();
+			RegistroClinico ultimoRegistro = service.ultimoRegistroPaciente(paciente.getId());
+			Long total_registros = Long.valueOf(service.listarRegistrosPorPaciente(paciente.getId()).size());
+			ListRegistros lr = new ListRegistros();
+			
+			lr.setPaciente_id(paciente.getId());
+			lr.setPaciente_nome(paciente.getNome());
+			lr.setPaciente_prontuario(paciente.getProntuario());
+			lr.setDescricao(ultimoRegistro.getDescricao());
+			lr.setData(ultimoRegistro.getData());
+			lr.setHora(ultimoRegistro.getHora());
+			lr.setTotal_registros(total_registros);
+			
+			if(registrosPorPaciente.isEmpty()) {
+				pacienteId = rc.getPaciente();
+				registrosPorPaciente.add(lr);
+			}
+			else if(!pacienteId.equals(rc.getPaciente())) {
+				pacienteId = rc.getPaciente();
+				registrosPorPaciente.add(lr);
+			}
+			
+		}
+		
+		
+		model.addAttribute("registro", registrosPorPaciente);
 		return "registro_clinico/busca";
 	}
 	
