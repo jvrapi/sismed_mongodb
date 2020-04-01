@@ -1,6 +1,5 @@
 package br.com.sismed.mongodb.service;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +24,16 @@ public class LogService {
 	
 	@Transactional(readOnly=false)
 	public void salvar(Log log) {
+		Integer totalLog = repository.findAll().size();
+		if(totalLog == 50) {
+			Log primeiro_documento = primeiro();
+			repository.deleteById(primeiro_documento.getId());
+		}
 		repository.save(log);
+	}
+	
+	@Transactional(readOnly = true)
+	public Log primeiro() {
+		return repository.findTopByOrderById();
 	}
 }

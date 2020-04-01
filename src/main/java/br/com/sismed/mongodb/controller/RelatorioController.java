@@ -1,5 +1,6 @@
 package br.com.sismed.mongodb.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,47 +19,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.com.sismed.mongodb.domain.Agenda;
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Custos;
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.LabelValue;
+import br.com.sismed.mongodb.domain.ListCustos;
 import br.com.sismed.mongodb.domain.Paciente;
+import br.com.sismed.mongodb.service.AgendaService;
 import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.CustosService;
 import br.com.sismed.mongodb.service.FuncionarioService;
 import br.com.sismed.mongodb.service.PacienteService;
 
-
-
 @Controller
 @RequestMapping("/relatorio")
-public class RelatorioController extends AbstractController{
-	
+public class RelatorioController extends AbstractController {
+
 	@Autowired
 	private PacienteService pacienteService;
-	
+
 	@Autowired
 	private ConvenioService convenioService;
-	
+
 	@Autowired
 	private FuncionarioService funcionarioService;
-	
+
 	@Autowired
 	private CustosService service;
-	
-	
+
+	@Autowired
+	private AgendaService agendaService;
+
 	@GetMapping("/listar")
 	public String listar() {
 		return "relatorio/lista";
 	}
-	
+
 	@GetMapping
-	public ResponseEntity<List<Custos>> mostrarDados(){
-		List<Custos> lista = service.buscarPorConvenio("5e67db1439b944511513af1a");
+	public ResponseEntity<List<Custos>> mostrarDados() {
+		LocalDate data1 = LocalDate.parse("2020-01-01");
+		LocalDate data2 = LocalDate.now();
+		String paciente = "5e7a4837065b4d61f67281b6";
+		List<Custos> lista = service.pacientePeriodo(paciente, data1, data2);
 		return ResponseEntity.ok().body(lista);
 	}
-	
-	
+
 	@GetMapping("/buscar/{id}")
 	@ResponseBody
 	public List<LabelValue> listar(@PathVariable("id") Integer id,
@@ -85,7 +91,7 @@ public class RelatorioController extends AbstractController{
 		else if (id == 3) {
 			List<Funcionario> allFunc = funcionarioService.ListarFuncionarioNome(term);
 			for (Funcionario f : allFunc) {
-				
+
 				LabelValue lv = new LabelValue();
 				lv.setLabel(f.getNome());
 				lv.setValue2(f.getId());
@@ -96,151 +102,327 @@ public class RelatorioController extends AbstractController{
 		return suggeestions;
 
 	}
-	
+
 	@PostMapping("/gerar")
 	public String gerarRelatorio(@RequestParam("paciente") String paciente, @RequestParam("convenio") String convenio,
 			@RequestParam("dataInicioValor") String dataInicio, @RequestParam("dataFimValor") String dataFim,
-			@RequestParam("funcionario") Long funcionario, RedirectAttributes attr, ModelMap model) {
-		System.out.println(convenio);
-		if (convenio == null && dataInicio == "" && funcionario == null) {
+			@RequestParam("funcionario") String funcionario, RedirectAttributes attr, ModelMap model) {
+
+		if (convenio == "" && dataInicio == "" && funcionario == "") {
 			// so por paciente
+			List<Custos> c = service.buscarPorPaciente(paciente);
+			List<ListCustos> listarCustos = new ArrayList<ListCustos>();
 			Paciente p = pacienteService.buscarPorId(paciente).get();
-			model.addAttribute("resultado", service.buscarPorPaciente(paciente));
-			
-			if(service.buscarReceitaPorPaciente(paciente) == null) {
+
+			for (Custos custos : c) {
+
+				Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+				Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+				Convenio convenioc = convenioService.buscarPorId(custos.getConvenio()).get();
+				ListCustos lc = new ListCustos();
+				lc.setFuncionario(f);
+				lc.setAgendamento(agendamento);
+				lc.setPaciente(p);
+				lc.setData(custos.getData());
+				lc.setValor(custos.getValor());
+				lc.setConvenio(convenioc);
+				listarCustos.add(lc);
+			}
+			model.addAttribute("resultado", listarCustos);
+
+			if (service.buscarReceitaPorPaciente(paciente) == null) {
 				model.addAttribute("receita", "O paciente " + p.getNome() + " não gerou receita.");
+			} else {
+				model.addAttribute("receita", "O paciente " + p.getNome() + " Gerou uma receita de R$ "
+						+ service.buscarReceitaPorPaciente(paciente));
 			}
-			else {
-				model.addAttribute("receita", "O paciente " + p.getNome() + " Gerou uma receita de R$ " + service.buscarReceitaPorPaciente(paciente));
-			}
-			
+
 		}
 
-		else if (paciente == null && dataInicio == "" && funcionario == null) {
+		else if (paciente == "" && dataInicio == "" && funcionario == "") {
 			// so por convenio
-			if(!convenio.equals("0")) {
-			Convenio c = convenioService.buscarPorId(convenio).get();
-			model.addAttribute("resultado", service.buscarPorConvenio(convenio));
-			if(service.buscarPorConvenio(convenio) == null) {
-				model.addAttribute("receita", "O convênio " + c.getNome() + " não gerou receita.");
-			}else {
-				model.addAttribute("receita", "O convênio " + c.getNome() + " Gerou uma receita de R$ " + service.buscarPorConvenio(convenio));
+			if (!convenio.equals("0")) {
+				List<Custos> c = service.buscarPorConvenio(convenio);
+				List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+
+				Convenio convenioCusto = convenioService.buscarPorId(convenio).get();
+
+				for (Custos custos : c) {
+
+					Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+					Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+					Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+					ListCustos lc = new ListCustos();
+					lc.setFuncionario(f);
+					lc.setAgendamento(agendamento);
+					lc.setPaciente(p);
+					lc.setData(custos.getData());
+					lc.setValor(custos.getValor());
+					lc.setConvenio(convenioCusto);
+					listarCustos.add(lc);
+				}
+				model.addAttribute("resultado", listarCustos);
+				if (service.buscarPorConvenio(convenio).isEmpty()) {
+					model.addAttribute("receita", "O convênio " + convenioCusto.getNome() + " não gerou receita.");
+				} else {
+					model.addAttribute("receita", "O convênio " + convenioCusto.getNome() + " Gerou uma receita de R$ "
+							+ service.buscarReceitaPorConvenio(convenio));
+				}
+
 			}
-			
-			}
-			/*if (convenio.equals(0)) {
-				model.addAttribute("resultado", service.buscarTodosConvenios());
-				if(service.receitaTodosConvenios() == null) {
+
+			if (convenio.equals("0")) {
+				List<Custos> c = service.buscarTodosConvenios();
+				List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+
+				for (Custos custos : c) {
+
+					Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+					Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+					Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+					Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+					ListCustos lc = new ListCustos();
+					lc.setFuncionario(f);
+					lc.setAgendamento(agendamento);
+					lc.setPaciente(p);
+					lc.setData(custos.getData());
+					lc.setValor(custos.getValor());
+					lc.setConvenio(convenioCusto);
+					listarCustos.add(lc);
+				}
+				model.addAttribute("resultado", listarCustos);
+				if (service.receitaTodosConvenios() == null) {
 					model.addAttribute("receita", "Os convênios não geraram receita ");
-					
-				}else {
-					model.addAttribute("receita", "Os convênios geraram uma receita de R$: " + service.receitaTodosConvenios());	
+
+				} else {
+					model.addAttribute("receita",
+							"Os convênios geraram uma receita de R$: " + service.receitaTodosConvenios());
 				}
-				
-			}*/
+
+			}
+
 		}
 
-		/*else if (paciente == null && convenio == null && dataInicio == "") {
+		else if (paciente == "" && convenio == "" && dataInicio == "") {
 			// so por funcionario
-			Funcionario f = fservice.buscarporId(funcionario);
-			model.addAttribute("resultado", service.buscarPorFuncionario(funcionario));
-			if(service.buscarReceitaPorFuncionario(funcionario) == null) {
-				model.addAttribute("receita", "O funcionario " + f.getNome() + " não gerou receita.");
-			}else {
-				model.addAttribute("receita", "O funcionario " + f.getNome() + " gerou uma receita de R$: " + service.buscarReceitaPorFuncionario(funcionario));
+			Funcionario f = funcionarioService.buscarporId(funcionario).get();
+			List<Custos> c = service.buscarPorFuncionario(funcionario);
+			List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+
+			for (Custos custos : c) {
+
+				Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+				Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+				Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+				ListCustos lc = new ListCustos();
+				lc.setFuncionario(f);
+				lc.setAgendamento(agendamento);
+				lc.setPaciente(p);
+				lc.setData(custos.getData());
+				lc.setValor(custos.getValor());
+				lc.setConvenio(convenioCusto);
+				listarCustos.add(lc);
 			}
-			
+
+			model.addAttribute("resultado", listarCustos);
+
+			if (service.buscarReceitaPorFuncionario(funcionario) == null) {
+				model.addAttribute("receita", "O funcionario " + f.getNome() + " não gerou receita.");
+			} else {
+				model.addAttribute("receita", "O funcionario " + f.getNome() + " gerou uma receita de R$: "
+						+ service.buscarReceitaPorFuncionario(funcionario));
+			}
+
 		}
 
-		else if (paciente == null && convenio == null && funcionario == null) {
+		else if (paciente == "" && convenio == "" && funcionario == "") {
 			// entre um periodo
-			LocalDate data1 = LocalDate.parse(dataInicio);
-			LocalDate data2 = LocalDate.parse(dataFim);
+			LocalDate inicio = LocalDate.parse(dataInicio);
+			LocalDate fim = LocalDate.parse(dataFim);
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String dataInicioFormatada = data1.format(formatter);
-			String dataFimFormatada = data2.format(formatter);
-			model.addAttribute("resultado", service.buscarPorDatas(dataInicio, dataFim));
-			if(service.buscarReceitaPorDatas(dataInicio, dataFim) == null) {
-				model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada + " não foi gerada uma receita " );
+			String dataInicioFormatada = inicio.format(formatter);
+			String dataFimFormatada = fim.format(formatter);
+			BigDecimal receita = service.buscarReceitaPorDatas(inicio, fim);
+			List<Custos> c = service.buscarPorDatas(inicio, fim);
+			List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+			for (Custos custos : c) {
 
-			}else {
-				model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada + " foi gerada uma receita de R$: " + service.buscarReceitaPorDatas(dataInicio, dataFim));
+				Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+				Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+				Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+				Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+				ListCustos lc = new ListCustos();
+				lc.setFuncionario(f);
+				lc.setAgendamento(agendamento);
+				lc.setPaciente(p);
+				lc.setData(custos.getData());
+				lc.setValor(custos.getValor());
+				lc.setConvenio(convenioCusto);
+				listarCustos.add(lc);
+			}
+
+			model.addAttribute("resultado", listarCustos);
+			if (receita == null) {
+				model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada
+						+ " não foi gerada uma receita ");
+
+			} else {
+				model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada
+						+ " foi gerada uma receita de R$: " + receita);
 
 			}
-			
-		} else if (funcionario == null && convenio == null) {
+		}
+
+		else if (funcionario == "" && convenio == "") {
 			// Paciente e Periodo
-			Paciente p = pservice.buscarporId(paciente);
-			LocalDate data1 = LocalDate.parse(dataInicio);
-			LocalDate data2 = LocalDate.parse(dataFim);
+			Paciente p = pacienteService.buscarPorId(paciente).get();
+			LocalDate inicio = LocalDate.parse(dataInicio);
+			LocalDate fim = LocalDate.parse(dataFim);
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String dataInicioFormatada = data1.format(formatter);
-			String dataFimFormatada = data2.format(formatter);
-			
-			model.addAttribute("resultado", service.PacientePeriodo(paciente, dataInicio, dataFim));
-			if(service.ReceitaPacientePeriodo(paciente, dataInicio, dataFim) == null) {
-				model.addAttribute("receita", "O paciente "+ p.getNome() + " no periodo de "+ dataInicioFormatada + " a " + dataFimFormatada + " não gerou receita.");
-			}
-			else{
-				model.addAttribute("receita", "O paciente "+ p.getNome() + " no periodo de "+ dataInicioFormatada + " a " + dataFimFormatada + " gerou uma receita de R$: " +service.ReceitaPacientePeriodo(paciente, dataInicio, dataFim));
-			}
-			
-		} else if (funcionario == null && paciente == null) {
-			// convenio periodo
-			LocalDate data1 = LocalDate.parse(dataInicio);
-			LocalDate data2 = LocalDate.parse(dataFim);
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String dataInicioFormatada = data1.format(formatter);
-			String dataFimFormatada = data2.format(formatter);
-			
-			if(convenio != 0){
-			Convenio c = cservice.buscarPorId(convenio);
-			model.addAttribute("resultado", service.ConvenioPeriodo(convenio, dataInicio, dataFim));
-			if(service.ReceitaConvenioPeriodo(convenio, dataInicio, dataFim) == null) {
-				model.addAttribute("receita", "O convenio "+ c.getNome() + 
-						" no periodo de " + dataInicioFormatada + " a " + dataFimFormatada  + " não gerou uma receita. ");
-			}else {
-				model.addAttribute("receita", "O convenio "+ c.getNome() + 
-						" no periodo de " + dataInicioFormatada + " a " + dataFimFormatada  + " gerou uma receita de R$: " + 
-						service.ReceitaConvenioPeriodo(convenio, dataInicio, dataFim));
-			}
-			
-			}
-			
-			if (convenio == 0) {
-				model.addAttribute("resultado", service.TodosConvenioPeriodo(dataInicio, dataFim));
-				if( service.ReceitaTodosConvenioPeriodo(dataInicio, dataFim) == null) {
-					model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada + " os convenios não geraram uma receita. ");
-				}else {
-					model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada + " os convenios geraram uma receita de R$: " 
-							+  service.ReceitaTodosConvenioPeriodo(dataInicio, dataFim));
-				}
-				
-			}
-		} else if (paciente == null && convenio == null) {
-			// funcionario e periodo
-			
-			LocalDate data1 = LocalDate.parse(dataInicio);
-			LocalDate data2 = LocalDate.parse(dataFim);
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			String dataInicioFormatada = data1.format(formatter);
-			String dataFimFormatada = data2.format(formatter);
-			
-			Funcionario f = fservice.buscarporId(funcionario);
-			model.addAttribute("resultado", service.FuncionarioPeriodo(funcionario, dataInicio, dataFim));
-			if(service.ReceitaFuncionarioPeriodo(funcionario, dataInicio, dataFim) == null) {
-				model.addAttribute("receita", "O medico "+ f.getNome() + " no periodo de "+ dataInicioFormatada + " a " + dataFimFormatada + " não gerou uma receita. ");
-			}else {
-				model.addAttribute("receita", "O medico "+ f.getNome() + " no periodo de "+ dataInicioFormatada + " a " + dataFimFormatada + " gerou uma receita de R$: " 
-						+ service.ReceitaFuncionarioPeriodo(funcionario, dataInicio, dataFim));
-			}
-			
+			String dataInicioFormatada = inicio.format(formatter);
+			String dataFimFormatada = inicio.format(formatter);
+			BigDecimal receita = service.receitaPacientePeriodo(paciente, inicio, fim);
+			List<Custos> c = service.pacientePeriodo(paciente, inicio, fim);
+			List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+			for (Custos custos : c) {
 
-		}*/
+				Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+				Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+
+				Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+				ListCustos lc = new ListCustos();
+				lc.setFuncionario(f);
+				lc.setAgendamento(agendamento);
+				lc.setPaciente(p);
+				lc.setData(custos.getData());
+				lc.setValor(custos.getValor());
+				lc.setConvenio(convenioCusto);
+				listarCustos.add(lc);
+			}
+
+			model.addAttribute("resultado", listarCustos);
+			if (receita == null) {
+				model.addAttribute("receita", "O paciente " + p.getNome() + " no periodo de " + dataInicioFormatada
+						+ " a " + dataFimFormatada + " não gerou receita.");
+			} else {
+				model.addAttribute("receita", "O paciente " + p.getNome() + " no periodo de " + dataInicioFormatada
+						+ " a " + dataFimFormatada + " gerou uma receita de R$: " + receita);
+			}
+
+		}
+
+		else if (funcionario == "" && paciente == "") {
+			// convenio periodo
+			LocalDate inicio = LocalDate.parse(dataInicio);
+			LocalDate fim = LocalDate.parse(dataFim);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String dataInicioFormatada = inicio.format(formatter);
+			String dataFimFormatada = fim.format(formatter);
+
+			if (!convenio.equals("0")) {
+
+				BigDecimal receita = service.receitaConvenioPeriodo(convenio, inicio, fim);
+				List<Custos> c = service.convenioPeriodo(convenio, inicio, fim);
+				List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+				Convenio convenioCusto = convenioService.buscarPorId(convenio).get();
+				for (Custos custos : c) {
+
+					Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+					Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+					Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+
+					ListCustos lc = new ListCustos();
+					lc.setFuncionario(f);
+					lc.setAgendamento(agendamento);
+					lc.setPaciente(p);
+					lc.setData(custos.getData());
+					lc.setValor(custos.getValor());
+					lc.setConvenio(convenioCusto);
+					listarCustos.add(lc);
+				}
+
+				model.addAttribute("resultado", listarCustos);
+				if (receita == null) {
+					model.addAttribute("receita", "O convenio " + convenioCusto.getNome() + " no periodo de "
+							+ dataInicioFormatada + " a " + dataFimFormatada + " não gerou uma receita. ");
+				} else {
+					model.addAttribute("receita", "O convenio " + convenioCusto.getNome() + " no periodo de "
+							+ dataInicioFormatada + " a " + dataFimFormatada + " gerou uma receita de R$: " + receita);
+				}
+
+			}
+
+			else {
+
+				BigDecimal receita = service.buscarReceitaPorDatas(inicio, fim);
+				List<Custos> c = service.buscarPorDatas(inicio, fim);
+				List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+				for (Custos custos : c) {
+
+					Funcionario f = funcionarioService.buscarporId(custos.getFuncionario()).get();
+					Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+					Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+					Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+					ListCustos lc = new ListCustos();
+					lc.setFuncionario(f);
+					lc.setAgendamento(agendamento);
+					lc.setPaciente(p);
+					lc.setData(custos.getData());
+					lc.setValor(custos.getValor());
+					lc.setConvenio(convenioCusto);
+					listarCustos.add(lc);
+				}
+
+				model.addAttribute("resultado", listarCustos);
+
+				if (receita == null) {
+					model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada
+							+ " os convenios não geraram uma receita. ");
+				} else {
+					model.addAttribute("receita", "Entre o periodo de " + dataInicioFormatada + " a " + dataFimFormatada
+							+ " os convenios geraram uma receita de R$: " + receita);
+				}
+
+			}
+		} else if (paciente == "" && convenio == "") {
+			// funcionario e periodo
+
+			LocalDate inicio = LocalDate.parse(dataInicio);
+			LocalDate fim = LocalDate.parse(dataFim);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String dataInicioFormatada = inicio.format(formatter);
+			String dataFimFormatada = fim.format(formatter);
+			BigDecimal receita = service.receitaFuncionarioPeriodo(funcionario, inicio, fim);
+			List<Custos> c = service.funcionarioPeriodo(funcionario, inicio, fim);
+			List<ListCustos> listarCustos = new ArrayList<ListCustos>();
+			Funcionario f = funcionarioService.buscarporId(funcionario).get();
+			for (Custos custos : c) {
+				Agenda agendamento = agendaService.buscarPorId(custos.getAgendamento()).get();
+				Paciente p = pacienteService.buscarPorId(custos.getPaciente()).get();
+				Convenio convenioCusto = convenioService.buscarPorId(custos.getConvenio()).get();
+				ListCustos lc = new ListCustos();
+				lc.setFuncionario(f);
+				lc.setAgendamento(agendamento);
+				lc.setPaciente(p);
+				lc.setData(custos.getData());
+				lc.setValor(custos.getValor());
+				lc.setConvenio(convenioCusto);
+				listarCustos.add(lc);
+			}
+			model.addAttribute("resultado", listarCustos);
+			if (receita == null) {
+				model.addAttribute("receita", "O medico " + f.getNome() + " no periodo de " + dataInicioFormatada
+						+ " a " + dataFimFormatada + " não gerou uma receita. ");
+			} else {
+				model.addAttribute("receita", "O medico " + f.getNome() + " no periodo de " + dataInicioFormatada
+						+ " a " + dataFimFormatada + " gerou uma receita de R$: " + receita);
+			}
+
+		}
 
 		return "relatorio/lista";
 	}
-	
+
 	@ModelAttribute("convenios")
 	public List<Convenio> allConvenios() {
 		return convenioService.buscarTodos();

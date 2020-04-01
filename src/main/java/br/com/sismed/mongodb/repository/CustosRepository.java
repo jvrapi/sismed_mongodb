@@ -8,10 +8,12 @@ import org.springframework.stereotype.Repository;
 import br.com.sismed.mongodb.domain.Custos;
 
 @Repository
-public interface CustosRepository extends MongoRepository<Custos, String>{
+public interface CustosRepository extends MongoRepository<Custos, String> {
 
 	List<Custos> findByPaciente(String paciente);
 
 	List<Custos> findByConvenio(String convenio);
+
+	List<Custos> findByFuncionario(String funcionario);
 
 }

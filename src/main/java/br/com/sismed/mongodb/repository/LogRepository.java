@@ -8,4 +8,5 @@ import br.com.sismed.mongodb.domain.Log;
 @Repository
 public interface LogRepository extends MongoRepository<Log, String>{
 
+	Log findTopByOrderById();
 }
