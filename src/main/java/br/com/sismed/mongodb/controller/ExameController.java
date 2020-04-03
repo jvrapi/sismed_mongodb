@@ -285,7 +285,7 @@ public class ExameController extends AbstractController {
 		if (!exame.getData_coleta().isEqual(e.getData_coleta())) {
 			Log l = new Log();
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(f.getId());
+			l.setFuncionario(f.getId());
 			l.setHora(LocalTime.now());
 			l.setDescricao("ALTERÇÃO NA DATA DE COLETA: NOME DO EXAME " + e.getNome() + ". NOME DO PACIENTE: "
 					+ p.getNome() + ". DA DATA " + e.getData_coleta().format(formatter) + " PARA A DATA "
@@ -296,7 +296,7 @@ public class ExameController extends AbstractController {
 		if (!exame.getData_envio().isEqual(e.getData_envio())) {
 			Log l = new Log();
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(f.getId());
+			l.setFuncionario(f.getId());
 			l.setHora(LocalTime.now());
 			l.setDescricao("ALTERÇÃO NA DATA DE ENVIO: NOME DO EXAME " + e.getNome() + ". NOME DO PACIENTE "
 					+ p.getNome() + ". DA DATA " + e.getData_envio().format(formatter) + " PARA A DATA "
@@ -309,7 +309,7 @@ public class ExameController extends AbstractController {
 				System.out.println("segundo if");
 				Log l = new Log();
 				l.setData(LocalDate.now());
-				l.setFuncionario_id(f.getId());
+				l.setFuncionario(f.getId());
 				l.setHora(LocalTime.now());
 				l.setDescricao("ALTERÇÃO DE DATA DE RETORNO: NOME DO EXAME: " + e.getNome() + ". NOME DO PACIENTE: "
 						+ p.getNome() + ". DA DATA " + e.getData_retorno().format(formatter) + " PARA A DATA "
@@ -319,7 +319,7 @@ public class ExameController extends AbstractController {
 				System.out.println("segundo if");
 				Log l = new Log();
 				l.setData(LocalDate.now());
-				l.setFuncionario_id(f.getId());
+				l.setFuncionario(f.getId());
 				l.setHora(LocalTime.now());
 				l.setDescricao("ALTERÇÃO DE DATA DE RETORNO: NOME DO EXAME: " + e.getNome() + ". NOME DO PACIENTE: "
 						+ p.getNome() + ". DE DATA DE RETORNO PENDENTE PARA A DATA "
@@ -329,7 +329,7 @@ public class ExameController extends AbstractController {
 		} else if (e.getData_retorno() != null) {
 			Log l = new Log();
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(f.getId());
+			l.setFuncionario(f.getId());
 			l.setHora(LocalTime.now());
 			l.setDescricao(
 					"ALTERÇÃO DE DATA DE RETORNO: NOME DO EXAME: " + e.getNome() + ". NOME DO PACIENTE: " + p.getNome()
@@ -352,7 +352,7 @@ public class ExameController extends AbstractController {
 			Funcionario f = funcionarioService.buscarPorCpf(user.getUsername());
 			Log l = new Log();
 			l.setData(LocalDate.now());
-			l.setFuncionario_id(f.getId());
+			l.setFuncionario(f.getId());
 			l.setHora(LocalTime.now());
 			l.setDescricao("EXCLUSÃO DE EXAME: NOME DO EXAME: " + e.getNome() + ". NOME DO PACIENTE: " + p.getNome());
 			logService.salvar(l);

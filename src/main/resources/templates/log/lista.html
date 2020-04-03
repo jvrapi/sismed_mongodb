@@ -48,7 +48,7 @@
 				
                 <div class="card ajustarCard mb-3">
                     <div class="card-body">
-                        <div th:each="l: ${logs.content}">
+                        <div th:each="l: ${resultados}">
 							
                             <div class="form-group col-md-1" style="display:inline;magin:auto;">
 
@@ -62,7 +62,7 @@
 
                             <div class="form-group col-md-1" style="display:inline;magin:auto;">
 
-                                <a title="Funcionario" th:text="${l.funcionario_id.nome}"> </a> :
+                                <a title="Funcionario" th:text="${l.funcionario.nome}"> </a> :
                             </div>
 
                             <div class="form-group col-md-1" style="display:inline;magin:auto;">

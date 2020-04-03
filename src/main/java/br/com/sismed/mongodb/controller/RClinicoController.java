@@ -122,6 +122,7 @@ public class RClinicoController extends AbstractController{
 		RegistroClinico ultimoRegistro = service.ultimoRegistro();
 		Paciente paciente = pacienteService.buscarPorId(registroclinico.getPaciente()).get();
 		Long numero;
+		String retorno = "";
 		if(ultimoRegistro != null) {
 			numero = ultimoRegistro.getNumero() + 1;
 		}else {
@@ -129,8 +130,14 @@ public class RClinicoController extends AbstractController{
 		}
 		registroclinico.setNumero(numero);
 		service.salvar(registroclinico);
-		attr.addFlashAttribute("success", "Registro cadastrado com sucesso");
-		return "redirect:/registroclinico/cadastrar/" + paciente.getId() + "/null";
+		attr.addFlashAttribute("sucesso", "Registro cadastrado com sucesso");
+		if(registroclinico.getAgendamento_id() == null) {
+			retorno = "redirect:/registroclinico/cadastrar/" + paciente.getId() + "/null";
+		}else {
+			retorno = "redirect:/registroclinico/cadastrar/" + paciente.getId() + "/" + registroclinico.getAgendamento_id();
+		}
+		
+		return retorno;
 	}
 	
 	@GetMapping("/find/{id}")

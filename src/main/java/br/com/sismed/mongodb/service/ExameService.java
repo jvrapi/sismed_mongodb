@@ -76,14 +76,16 @@ public class ExameService {
 				.addCriteria(Criteria.where("data_coleta").is(data_coleta).and("paciente").is(paciente_id));
 		return mongoTemplate.find(query, Exame.class);
 	}
-
+	
+	@Transactional(readOnly = true)
 	public List<Exame> listarExamesPorNomeEDataColeta(String exame, String data) {
 		LocalDate data_coleta = LocalDate.parse(data);
 		Query query = new Query()
 				.addCriteria(Criteria.where("nome").is(exame).and("data_coleta").is(data_coleta));
 		return mongoTemplate.find(query, Exame.class);
 	}
-
+	
+	@Transactional(readOnly = true)
 	public List<Exame> listarExamesPorNomeEPacienteEDataColeta(String exame, String paciente_id, String data) {
 		LocalDate data_coleta = LocalDate.parse(data);
 		Query query = new Query()

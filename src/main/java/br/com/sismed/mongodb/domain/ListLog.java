@@ -3,12 +3,10 @@ package br.com.sismed.mongodb.domain;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@Document(collection = "sismed_log")
-public class Log extends AbstractEntity {
+public class ListLog extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -17,7 +15,7 @@ public class Log extends AbstractEntity {
 
 	private LocalTime hora;
 
-	private String funcionario;
+	private Funcionario funcionario;
 
 	private String descricao;
 
@@ -37,12 +35,11 @@ public class Log extends AbstractEntity {
 		this.hora = hora;
 	}
 
-	
-	public String getFuncionario() {
+	public Funcionario getFuncionario() {
 		return funcionario;
 	}
 
-	public void setFuncionario(String funcionario) {
+	public void setFuncionario(Funcionario funcionario) {
 		this.funcionario = funcionario;
 	}
 
