@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	$( function() {
 		$("#txtBusca").autocomplete({
-			source: "http://localhost:8080/exame/buscar/2",
+			source: "http://localhost:8080/exame/buscarpaciente",
 			minLength: 1,
 			select: function (event, ui) {
 				$("#id_paciente").val(ui.item.value)
@@ -16,11 +16,12 @@ function muda3() {
 	$("#txtBusca").css("display", "");
 	$("#coleta_data").css("display", "none");
 	$('#txtBusca').unmask();
+	$('#txtBusca').val("");
 	$("#dropdownMenu2").text("Exame");
 	$("#dropdownMenu2").val("3");
 	$( function() {
 		$("#txtBusca").autocomplete({
-			source: "http://localhost:8080/exame/buscar/3",
+			source: "http://localhost:8080/exame/buscarexame",
 			minLength: 2,
 			select: function (event, ui) {
 				$("#nome_exame").val(ui.item.label)
@@ -35,6 +36,7 @@ function muda2() {
     $("#txtBusca").css("display", "");
     $("#coleta_data").css("display", "none");
 	$('#txtBusca').unmask();
+	$('#txtBusca').val("");
 	$("#dropdownMenu2").text("Paciente");
 	$("#dropdownMenu2").val("2");
 	$( function() {
@@ -54,6 +56,7 @@ function muda4() {
     $("#txtBusca").css("display", "none");
     $("#coleta_data").css("display", "");
 	$('#txtBusca').unmask();
+	$('#txtBusca').val("");
 	$("#dropdownMenu2").text("Data de Coleta");
 	$("#dropdownMenu2").val("4");
 	$( function() {

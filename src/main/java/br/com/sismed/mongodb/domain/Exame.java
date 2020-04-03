@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@Document(collection="sismed_exame")
+@Document(collection = "sismed_exame")
 public class Exame extends AbstractEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -28,13 +28,13 @@ public class Exame extends AbstractEntity {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_retorno;
 
-	private String paciente_id;
+	private String paciente;
 
-	private String funcionario_id;
+	private String funcionario;
 
 	private String tipo;
 
-	private String laboratorio_id;
+	private String laboratorio;
 
 	public String getNome() {
 		return nome;
@@ -76,22 +76,6 @@ public class Exame extends AbstractEntity {
 		this.data_retorno = data_retorno;
 	}
 
-	public String getPaciente_id() {
-		return paciente_id;
-	}
-
-	public void setPaciente_id(String paciente_id) {
-		this.paciente_id = paciente_id;
-	}
-
-	public String getFuncionario_id() {
-		return funcionario_id;
-	}
-
-	public void setFuncionario_id(String funcionario_id) {
-		this.funcionario_id = funcionario_id;
-	}
-
 	public String getTipo() {
 		return tipo;
 	}
@@ -108,14 +92,6 @@ public class Exame extends AbstractEntity {
 		this.funcionario_lab = funcionario_lab;
 	}
 
-	public String getLaboratorio_id() {
-		return laboratorio_id;
-	}
-
-	public void setLaboratorio_id(String laboratorio_id) {
-		this.laboratorio_id = laboratorio_id;
-	}
-
 	public String getValor() {
 		return valor;
 	}
@@ -123,5 +99,31 @@ public class Exame extends AbstractEntity {
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
+
+	public String getPaciente() {
+		return paciente;
+	}
+
+	public void setPaciente(String paciente) {
+		this.paciente = paciente;
+	}
+
+	public String getFuncionario() {
+		return funcionario;
+	}
+
+	public void setFuncionario(String funcionario) {
+		this.funcionario = funcionario;
+	}
+
+	public String getLaboratorio() {
+		return laboratorio;
+	}
+
+	public void setLaboratorio(String laboratorio) {
+		this.laboratorio = laboratorio;
+	}
+	
+	
 
 }

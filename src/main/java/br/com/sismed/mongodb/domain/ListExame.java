@@ -8,8 +8,7 @@ public class ListExame extends AbstractEntity {
 
 	private String exame_nome;
 	private String exame_tipo;
-	private String paciente_nome;
-	private String paciente_id;
+	private Paciente paciente;
 	private LocalDate data_coleta;
 	private LocalDate data_envio;
 	private LocalDate data_retorno;
@@ -30,20 +29,12 @@ public class ListExame extends AbstractEntity {
 		this.exame_tipo = exame_tipo;
 	}
 
-	public String getPaciente_nome() {
-		return paciente_nome;
+	public Paciente getPaciente() {
+		return paciente;
 	}
 
-	public void setPaciente_nome(String paciente_nome) {
-		this.paciente_nome = paciente_nome;
-	}
-
-	public String getPaciente_id() {
-		return paciente_id;
-	}
-
-	public void setPaciente_id(String paciente_id) {
-		this.paciente_id = paciente_id;
+	public void setPaciente(Paciente paciente) {
+		this.paciente = paciente;
 	}
 
 	public LocalDate getData_coleta() {
