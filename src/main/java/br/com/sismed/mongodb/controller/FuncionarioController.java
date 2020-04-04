@@ -77,31 +77,6 @@ public class FuncionarioController extends AbstractController{
 	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
 		
-		Funcionario func = service.ultimoRegistro();
-
-		
-		Perfil p = new Perfil();
-		if(funcionario.getCrm() == null) {
-			p.setId(2L);
-			p.setDescricao("FUNCIONARIO");
-		}else {
-			p.setId(3L);
-			p.setDescricao("MEDICO");
-		}
-		funcionario.setPerfil(p);
-		
-		
-		
-		
-		Long matricula;
-
-		if (func != null) {
-			matricula = func.getMatricula() + 1;
-		} else {
-			matricula = 1L;
-		}
-
-		funcionario.setMatricula(matricula);
 
 		service.salvar(funcionario);
 		
@@ -150,7 +125,7 @@ public class FuncionarioController extends AbstractController{
 	
 	@PostMapping("/editar")
 	public String editar(Funcionario funcionario, RedirectAttributes attr) {
-		service.salvar(funcionario);
+		service.editar(funcionario);
 		String id = funcionario.getId();
 		attr.addFlashAttribute("sucesso", "Funcionario(a) alterado(a) com sucesso");
 		return "redirect:/funcionario/editar/" + id;

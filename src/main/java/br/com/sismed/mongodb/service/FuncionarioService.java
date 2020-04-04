@@ -1,5 +1,6 @@
 package br.com.sismed.mongodb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +19,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sismed.mongodb.domain.Funcionario;
 import br.com.sismed.mongodb.domain.Login;
+import br.com.sismed.mongodb.domain.Perfil;
+import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.repository.FuncionarioRepository;
 
 @Service
@@ -34,9 +36,12 @@ public class FuncionarioService implements UserDetailsService {
 
 	@Autowired
 	private MongoTemplate template;
-	
+
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	private TConvenioService tipoConvenioService;
 
 	@Transactional(readOnly = true)
 	public List<Funcionario> buscarTodos() {
@@ -68,9 +73,38 @@ public class FuncionarioService implements UserDetailsService {
 	}
 
 	@Transactional(readOnly = false)
-	public Funcionario salvar(Funcionario funcionario) {
+	public void salvar(Funcionario funcionario) {
+		Funcionario func = ultimoRegistro();
+		Perfil p = new Perfil();
+		Long matricula;
+		if (func != null) {
+			matricula = func.getMatricula() + 1;
+		} else {
+			matricula = 1L;
+		}
 
-		return repository.save(funcionario);
+		funcionario.setMatricula(matricula);
+		
+		
+		if (funcionario.getCrm() != null) {
+			TConvenio tipo = tipoConvenioService.buscarPorNome("particular");
+			List<String> tipos = new ArrayList<String>();
+			tipos.add(tipo.getId());
+			funcionario.setTconvenio(tipos);
+			p.setId(2L);
+			p.setDescricao("MEDICO");
+			
+		}else {
+			p.setId(3L);
+			p.setDescricao("FUNCIONARIO");
+		}
+		funcionario.setPerfil(p);
+		repository.save(funcionario);
+	}
+
+	@Transactional(readOnly = false)
+	public void editar(Funcionario funcionario) {
+		repository.save(funcionario);
 	}
 
 	@Transactional(readOnly = true)
@@ -105,50 +139,51 @@ public class FuncionarioService implements UserDetailsService {
 		);
 	}
 
-	
-
 	@Transactional(readOnly = true)
 	public List<Funcionario> ListarFuncionarioNome(String dado) {
 
 		return repository.findByNome(dado);
 	}
-	
-	@Transactional(readOnly=true)
+
+	@Transactional(readOnly = true)
 	public Funcionario buscarFuncionarioAtivo(String cpf) {
-		Query query = new Query()
-				.addCriteria(Criteria.where("cpf").is(cpf).and("data_termino").is(null));
+		Query query = new Query().addCriteria(Criteria.where("cpf").is(cpf).and("data_termino").is(null));
 		return template.findOne(query, Funcionario.class);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void pedidoRedefinirSenha(String cpf, String email) throws MessagingException {
-		/*busca pelo login a partir do cpf e testa se o mesmo ainda possui acesso a o sistema;
-		o funcionario só tera acesso a o sistema caso a data de termino dele seja nula. Se a data de termino dele é nula, isso indica que o mesmo ainda possui vinculo ao SISMED;
-		 Caso não encontre nenhum, ele lançara uma excessão dizendo que o funcionario não possui acesso ao sistema*/
+		/*
+		 * busca pelo login a partir do cpf e testa se o mesmo ainda possui acesso a o
+		 * sistema; o funcionario só tera acesso a o sistema caso a data de termino dele
+		 * seja nula. Se a data de termino dele é nula, isso indica que o mesmo ainda
+		 * possui vinculo ao SISMED; Caso não encontre nenhum, ele lançara uma excessão
+		 * dizendo que o funcionario não possui acesso ao sistema
+		 */
 		Funcionario funcionario = buscarFuncionarioAtivo(cpf);
-				
-		
-		//gera um codgio verificador aleatorio com 6 digitos
-		String verificador  = RandomStringUtils.randomAlphanumeric(6);
-		
-		//seta o codigo verificador na tabela para uma verificação na hora em que o usuario informar o codigo
+
+		// gera um codgio verificador aleatorio com 6 digitos
+		String verificador = RandomStringUtils.randomAlphanumeric(6);
+
+		// seta o codigo verificador na tabela para uma verificação na hora em que o
+		// usuario informar o codigo
 		Login login = funcionario.getLogin();
 		login.setCodigo(verificador);
 		funcionario.setLogin(login);
 		salvar(funcionario);
-		// chama o metodo responsavel por enviar o email informado em tela, junto com o codigo verificador
+		// chama o metodo responsavel por enviar o email informado em tela, junto com o
+		// codigo verificador
 		emailService.enviarPedidoRedefinicaoSenha(email, verificador);
 	}
-	
+
 	@Transactional(readOnly = false)
 	public void alterarSenha(Funcionario funcionario, String senha) {
 		Login l = funcionario.getLogin();
 		l.setSenha(senha);
 
 		funcionario.setLogin(l);
-		
+
 		repository.save(funcionario);
-		
-		
+
 	}
 }
