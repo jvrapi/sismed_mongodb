@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.sismed.mongodb.domain.TConvenio;
-
 import br.com.sismed.mongodb.repository.TConvenioRepository;
 
 @Service
@@ -20,6 +21,11 @@ public class TConvenioService {
 	@Transactional(readOnly = true)
 	public List<TConvenio> listarTodos(String id) {
 		return repository.findByConvenio(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<TConvenio> listarTodosComPaginacao(String id, Pageable pageable) {
+		return repository.listarTodosComPagincacao(id, pageable);
 	}
 	
 	@Transactional(readOnly = true)

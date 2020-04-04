@@ -2,9 +2,13 @@ package br.com.sismed.mongodb.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
-import br.com.sismed.mongodb.domain.Perfil;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
@@ -36,15 +39,35 @@ public class FuncionarioController extends AbstractController{
 	@Autowired
 	private TConvenioService tcService;
 	
-	@GetMapping
-	public ResponseEntity<Funcionario> mostrar(){
-		return ResponseEntity.ok().body(service.buscarFuncionarioAtivo("057.921.597-00"));
-	}
-	
 	@GetMapping("/listar")
-	public String listarTodos(ModelMap model) {
-		List<Funcionario> listFuncionario = service.buscarTodos();
+	public String listarTodos(ModelMap model, @RequestParam(value = "page", required=false, defaultValue="1") int page) {
+		PageRequest pagerequest = PageRequest.of(page-1, 13, Sort.by("nome").ascending());
+		Page<Funcionario> listFuncionario = service.buscarTodosComPaginacao(pagerequest);
 		model.addAttribute("funcionario", listFuncionario);
+		int lastPage = listFuncionario.getTotalPages();
+		if (lastPage == 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (lastPage == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, lastPage).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == 2 && lastPage == 3) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == 1 || page == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page > 2 && page < lastPage - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page - 2, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == lastPage - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page - 2, lastPage).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		} else if (page == lastPage) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(lastPage - 2, lastPage).boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
 		return "funcionario/lista";
 	}
 	
@@ -77,7 +100,7 @@ public class FuncionarioController extends AbstractController{
 	@PostMapping("/salvar")
 	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
 		
-
+		
 		service.salvar(funcionario);
 		
 		attr.addFlashAttribute("sucesso", "Funcionario(a) cadastrado(a) com sucesso");
@@ -125,7 +148,7 @@ public class FuncionarioController extends AbstractController{
 	
 	@PostMapping("/editar")
 	public String editar(Funcionario funcionario, RedirectAttributes attr) {
-		service.editar(funcionario);
+		service.salvar(funcionario);
 		String id = funcionario.getId();
 		attr.addFlashAttribute("sucesso", "Funcionario(a) alterado(a) com sucesso");
 		return "redirect:/funcionario/editar/" + id;
@@ -193,10 +216,10 @@ public class FuncionarioController extends AbstractController{
 		if(funcionario.getTconvenio() != null) {
 			funcionario.getTconvenio().addAll(tconvenios);
 		}
-		else {
+		else {	
 			funcionario.setTconvenio(tconvenios);
 		}
-		service.salvar(funcionario);
+		service.editar(funcionario);
 		return "redirect:/funcionario/editar/" + funcionario.getId();
 	}
 	
@@ -207,7 +230,7 @@ public class FuncionarioController extends AbstractController{
 		for (TConvenio tConvenio : tconvenios) {
 			medico.getTconvenio().remove(tConvenio.getId());
 		}
-		service.salvar(medico);
+		service.editar(medico);
 		return "redirect:/funcionario/editar/" + funcId;
 	}
 	

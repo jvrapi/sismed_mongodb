@@ -57,6 +57,8 @@ public class Paciente extends AbstractEntity {
 	private LocalDate validade;
 
 	private String tipo_convenio;
+	
+	private String convenio;
 
 	private Endereco endereco;
 
@@ -236,6 +238,14 @@ public class Paciente extends AbstractEntity {
 
 	public void setTipo_convenio(String tipo_convenio) {
 		this.tipo_convenio = tipo_convenio;
+	}
+
+	public String getConvenio() {
+		return convenio;
+	}
+
+	public void setConvenio(String convenio) {
+		this.convenio = convenio;
 	}
 
 	public Endereco getEndereco() {

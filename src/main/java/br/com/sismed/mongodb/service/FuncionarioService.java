@@ -10,10 +10,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,6 +46,11 @@ public class FuncionarioService implements UserDetailsService {
 	@Transactional(readOnly = true)
 	public List<Funcionario> buscarTodos() {
 		return repository.findAll();
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<Funcionario> buscarTodosComPaginacao(Pageable pageable) {
+		return repository.findAll(pageable);
 	}
 
 	@Transactional(readOnly = true)

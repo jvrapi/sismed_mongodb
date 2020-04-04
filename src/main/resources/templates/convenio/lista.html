@@ -78,7 +78,7 @@
                                     <th>Conta</th>
                                 </tr>
                             </thead>
-                            <tbody th:each="c : ${convenios}">
+                            <tbody th:each="c : ${convenio}">
                                 <tr class="conteudo" style="font-size: 1em;">
                                     <td>
                                         <a th:href="@{/convenios/editar/{id} (id=${c.id}) }" title="Mostrar informações" th:text="${c.nome}"> </a>
@@ -106,7 +106,25 @@
                             </tbody>
                         </table>
                     </div>
-                    
+                    <div th:if="${convenio.totalPages > 0}">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:if="${convenio.hasPrevious()}">
+                                    <a class="page-link" th:href="@{/convenios/listar(page=1)}">
+                                        <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:each="p : ${pageNumbers}" th:classappend="${p==convenio.pageable.pageNumber + 1} ? active">
+                                    <a class="page-link" th:text=${p} th:href="@{/convenios/listar(page=${p})}"></a>
+                                </li>
+                                <li class="page-item" th:if="${convenio.hasNext()}">
+                                    <a class="page-link" th:href="@{/convenios/listar(page=${convenio.totalPages})}">
+                                        <span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
