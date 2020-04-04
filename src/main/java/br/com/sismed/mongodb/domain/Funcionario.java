@@ -245,5 +245,9 @@ public class Funcionario extends AbstractEntity {
 	public void setTconvenio(List<String> tconvenio) {
 		this.tconvenio = tconvenio;
 	}
+
+	public Funcionario(String cpf) {
+		this.cpf = cpf;
+	}
 	
 }

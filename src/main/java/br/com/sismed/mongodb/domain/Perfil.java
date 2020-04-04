@@ -1,30 +1,25 @@
 package br.com.sismed.mongodb.domain;
 
+public class Perfil {
 
-
-
-public class Perfil extends AbstractEntity {
-
-	
 	private static final long serialVersionUID = 1L;
 	private String descricao;
-	
-	public Perfil() {
-		super();
-	}
+	private Long id;
 
-	
-	public Perfil(String id) {
-		super.setId(id);
-	}
-
-	public String getDesc() {
+	public String getDescricao() {
 		return descricao;
 	}
 
-	public void setDesc(String descricao) {
+	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
-	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

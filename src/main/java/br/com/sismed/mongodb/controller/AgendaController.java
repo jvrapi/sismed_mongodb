@@ -73,7 +73,7 @@ public class AgendaController extends AbstractController {
 	@GetMapping("/agendamentos")
 	public String abrirAgendaDoDia(ModelMap model, @AuthenticationPrincipal User user) {
 		Funcionario funcionario = funcionarioService.buscarPorCpf(user.getUsername());
-		String perfil = funcionario.getPerfil().getId();
+		Long perfil = funcionario.getPerfil().getId();
 		String medico_id = funcionario.getId();
 
 		List<Funcionario> medicos = funcionarioService.buscarTodos();
@@ -159,7 +159,7 @@ public class AgendaController extends AbstractController {
 	public String agendaMedico(Agenda agenda, ModelMap model, @AuthenticationPrincipal User user) {
 
 		Funcionario medico = funcionarioService.buscarPorCpf(user.getUsername());
-		String perfil = medico.getPerfil().getId();
+		Long perfil = medico.getPerfil().getId();
 		String medico_id = medico.getId();
 		List<Agenda> agendamentos = service.ListarAgendamentosMedico(medico_id);
 		List<ListAgendamentos> ListAgendamentos = new ArrayList<ListAgendamentos>();

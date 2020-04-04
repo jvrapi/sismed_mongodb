@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class Login {
 
 	private String senha;
-	private String codigo_verificar;
+	private String codigo;
 
 	public String getSenha() {
 		return senha;
@@ -15,12 +15,14 @@ public class Login {
 		this.senha = new BCryptPasswordEncoder().encode(senha);
 	}
 
-	public String getCodigo_verificar() {
-		return codigo_verificar;
+	public String getCodigo() {
+		return codigo;
 	}
 
-	public void setCodigo_verificar(String codigo_verificar) {
-		this.codigo_verificar = codigo_verificar;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
+
+	
 
 }

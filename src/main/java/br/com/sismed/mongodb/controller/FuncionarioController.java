@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
-import br.com.sismed.mongodb.domain.Login;
 import br.com.sismed.mongodb.domain.Perfil;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
@@ -36,6 +35,11 @@ public class FuncionarioController extends AbstractController{
 
 	@Autowired
 	private TConvenioService tcService;
+	
+	@GetMapping
+	public ResponseEntity<Funcionario> mostrar(){
+		return ResponseEntity.ok().body(service.buscarFuncionarioAtivo("057.921.597-00"));
+	}
 	
 	@GetMapping("/listar")
 	public String listarTodos(ModelMap model) {
@@ -78,9 +82,11 @@ public class FuncionarioController extends AbstractController{
 		
 		Perfil p = new Perfil();
 		if(funcionario.getCrm() == null) {
-			p.setDesc("FUNCIONARIO");
+			p.setId(2L);
+			p.setDescricao("FUNCIONARIO");
 		}else {
-			p.setDesc("MEDICO");
+			p.setId(3L);
+			p.setDescricao("MEDICO");
 		}
 		funcionario.setPerfil(p);
 		
