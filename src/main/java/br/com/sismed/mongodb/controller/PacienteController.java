@@ -85,6 +85,14 @@ public class PacienteController extends AbstractController{
 		return "/pacientes/lista";
 	}
 	
+	@ResponseBody
+	@GetMapping("/teste")
+	public Page<Paciente> teste() {
+		PageRequest pagerequest = PageRequest.of(0, 1, Sort.by("nome").ascending());
+		Page<Paciente> paciente = pService.buscarTodosComPaginacao(pagerequest);
+		return paciente;
+	}
+	
 	@GetMapping("/cadastrar")
 	public String cadastrar(Paciente paciente, ModelMap model) {
 		model.addAttribute("convenio", cService.buscarTodos());

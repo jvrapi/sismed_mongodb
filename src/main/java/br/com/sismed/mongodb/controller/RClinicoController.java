@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -62,38 +63,60 @@ public class RClinicoController extends AbstractController{
 	private ConvenioService convenioService;
 	
 	@GetMapping("/listar")
-	public String listar(RegistroClinico registroclinico, ModelMap model) {
-		List<RegistroClinico> allRegistros = service.listar();
-		List<ListRegistros> registrosPorPaciente = new ArrayList<ListRegistros>();
-		String pacienteId = ""; // Variavel auxiliar para verificar se o paciente já esta dentro do array de retorno para a pagina
-		/*Pecorre todos os registros clinicos para poder filtrar por paciente*/
-		for(RegistroClinico rc : allRegistros) {
-			Paciente paciente = pacienteService.buscarPorId(rc.getPaciente()).get();
-			RegistroClinico ultimoRegistro = service.ultimoRegistroPaciente(paciente.getId());
-			Long total_registros = Long.valueOf(service.listarRegistrosPorPaciente(paciente.getId()).size());
+	public String listar(RegistroClinico registroclinico, ModelMap model, @RequestParam(value = "page", required=false, defaultValue="1") int page) {
+		Pageable pageable = PageRequest.of(page-1, 2);
+		Page<RegistroClinico> distinctRegistros = service.distinctRegistros(pageable);
+		List<ListRegistros> registrosPorPaciente = new ArrayList<>();
+		Long total_registros = null;
+		for (RegistroClinico registro : distinctRegistros.getContent()) {
 			ListRegistros lr = new ListRegistros();
-			
+			Paciente paciente = pacienteService.buscarPorId(registro.getPaciente()).get();
+			total_registros = Long.valueOf(service.listarRegistrosPorPaciente(registro.getPaciente()).size());
+			lr.setData(registro.getData());
+			lr.setDescricao(registro.getDescricao());
+			lr.setHora(registro.getHora());
 			lr.setPaciente_id(paciente.getId());
 			lr.setPaciente_nome(paciente.getNome());
 			lr.setPaciente_prontuario(paciente.getProntuario());
-			lr.setDescricao(ultimoRegistro.getDescricao());
-			lr.setData(ultimoRegistro.getData());
-			lr.setHora(ultimoRegistro.getHora());
 			lr.setTotal_registros(total_registros);
-			
-			if(registrosPorPaciente.isEmpty()) {
-				pacienteId = rc.getPaciente();
-				registrosPorPaciente.add(lr);
-			}
-			else if(!pacienteId.equals(rc.getPaciente())) {
-				pacienteId = rc.getPaciente();
-				registrosPorPaciente.add(lr);
-			}
-			
+			registrosPorPaciente.add(lr);
 		}
 		
+		int totalPages = distinctRegistros.getTotalPages();
+		
+		if (totalPages == 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if(totalPages == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if (page == 2 && totalPages == 3) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 1).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if(page == 1 || page == 2) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if(page > 2 && page < totalPages - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page - 2, page + 2).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if(page == totalPages - 1) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(page-2, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		else if(page == totalPages) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(totalPages - 2, totalPages).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		
+		model.addAttribute("pagination", distinctRegistros);
 		
 		model.addAttribute("registro", registrosPorPaciente);
+		
 		return "registro_clinico/busca";
 	}
 	

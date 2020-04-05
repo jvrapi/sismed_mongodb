@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.sismed.mongodb.domain.RegistroClinico;
@@ -19,4 +21,5 @@ public interface RClinicoRepository extends MongoRepository<RegistroClinico, Str
 	List<RegistroClinico> findByPaciente(String paciente_id);
 	
 	RegistroClinico findTopByPacienteOrderByIdDesc(String paciente_id);
+
 }
