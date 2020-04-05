@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,9 @@ public class PacienteService {
 
 	@Autowired
 	private PacienteRepository pRepository;
+	
+	@Autowired
+	private MongoTemplate template;
 
 	@Transactional(readOnly = true)
 	public Page<Paciente> buscarTodosComPaginacao(Pageable pageable) {
@@ -74,6 +80,15 @@ public class PacienteService {
 	}
 	
 	public List<Paciente> PesquisarCelular(String dado) {
-		return pRepository.findByCelularRegex(dado);
+		Query query = new Query();
+		
+		if(dado.length() <= 3) {
+			query.addCriteria(Criteria.where("celular").regex("\\" + dado));
+		}
+		else {
+			String array[] = dado.split("\\)");
+			query.addCriteria(Criteria.where("celular").regex("\\" + array[0] + "\\)" + array[1]));
+		}
+		return template.find(query, Paciente.class);
 	} 
 }

@@ -163,12 +163,24 @@ public class PacienteController extends AbstractController{
 			}
 		}
 		else if(id == 4) {
+			
 			List<Paciente> allPacientes = pService.PesquisarCelular(term);
 			for (Paciente paciente : allPacientes) {
 				LabelValue lv = new LabelValue();
 				lv.setLabel(paciente.getNome());
 				lv.setValue2(paciente.getId());
 				suggeestions.add(lv);
+			}
+			
+			if(term.length() <=3) {
+				System.out.println("aqui");
+				System.out.println(term);
+			}
+			else {
+				System.out.println("ali");
+				String array[] = term.split("\\)");
+				System.out.println(array[0]);
+				System.out.println(")" + array[1]);
 			}
 		}
 		return suggeestions;
