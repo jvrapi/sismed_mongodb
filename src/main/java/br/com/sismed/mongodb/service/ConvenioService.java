@@ -56,6 +56,18 @@ public class ConvenioService {
 	public List<Convenio> ListarPorNome(String term) {
 		return repository.findByNome(term);
 	}
+	
+	public List<Convenio> listarPorNomeRegex(String term) {
+		return repository.findByNomeRegex(term);
+	}
+
+	public List<Convenio> ListarPorCNPJRegex(String term) {
+		return repository.findByCnpjRegex(term);
+	}
+
+	public List<Convenio> ListarPorANSRegex(String term) {
+		return repository.findByAnsRegex(term);
+	}
 
 	
 

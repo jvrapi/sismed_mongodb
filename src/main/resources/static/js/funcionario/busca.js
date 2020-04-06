@@ -87,7 +87,6 @@ $(document).ready(function() {
 			function muda5() {
 				$('#txtBusca').unmask();
 				$('#txtBusca').val("");
-				$('#txtBusca').mask('00 000000');
 				$("#dropdownMenu2").text("CRM");
 				$("#dropdownMenu2").val("5");
 				$( function() {

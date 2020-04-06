@@ -21,4 +21,7 @@ public interface TConvenioRepository extends MongoRepository<TConvenio,String>{
 	
 	@Query("{ 'nome' : { '$regex' : ?0 , $options: 'i'}}")
 	public TConvenio findByNome(String nome);
+
+	@Query("{ $and: [ { 'nome': { '$regex': ?0, $options: 'i' } }, { 'convenio': ?1 } ] }")
+	public List<TConvenio> listarPorNomeRegex(String term, String id);
 }

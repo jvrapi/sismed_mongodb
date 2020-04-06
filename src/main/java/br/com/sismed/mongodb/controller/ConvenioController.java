@@ -1,6 +1,7 @@
 package br.com.sismed.mongodb.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
+import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.service.ConvenioService;
 
 @Controller
@@ -127,6 +130,41 @@ public class ConvenioController extends AbstractController{
 		attr.addFlashAttribute("sucesso", "Convenio excluido com sucesso");
 		return "redirect:/convenios/listar";
 
+	}
+	
+	@GetMapping("/buscar/{id}")
+	@ResponseBody
+	public List<LabelValue> listar(@PathVariable("id") Integer id, @RequestParam (value="term", required=false, defaultValue="") String term) {
+		List<LabelValue> suggeestions = new ArrayList<LabelValue>();
+		if(id == 1) {
+			List<Convenio> allConvenios = service.listarPorNomeRegex(term);
+			for (Convenio convenio : allConvenios) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(convenio.getNome());
+				lv.setValue(convenio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		else if(id == 2) {
+			List<Convenio> allConvenios = service.ListarPorCNPJRegex(term);
+			for (Convenio convenio: allConvenios) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(convenio.getNome());
+				lv.setValue(convenio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		else if(id == 3) {
+			List<Convenio> allConvenios = service.ListarPorANSRegex(term);
+			for (Convenio convenio: allConvenios) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(convenio.getNome());
+				lv.setValue(convenio.getId());
+				suggeestions.add(lv);
+			}
+		}
+		
+		return suggeestions;	
 	}
 
 }

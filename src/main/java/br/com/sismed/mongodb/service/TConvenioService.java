@@ -52,6 +52,10 @@ public class TConvenioService {
 	public TConvenio buscarPorNome(String nome) {
 		return repository.findByNome(nome);
 	}
+
+	public List<TConvenio> ListarPorNome(String term, String id) {
+		return repository.listarPorNomeRegex(term, id);
+	}
 	
 
 }

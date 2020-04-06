@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.sismed.mongodb.domain.Convenio;
 import br.com.sismed.mongodb.domain.Funcionario;
+import br.com.sismed.mongodb.domain.LabelValue;
 import br.com.sismed.mongodb.domain.TConvenio;
 import br.com.sismed.mongodb.service.ConvenioService;
 import br.com.sismed.mongodb.service.FuncionarioService;
@@ -159,6 +160,76 @@ public class FuncionarioController extends AbstractController{
 		service.excluir(id);
 		attr.addFlashAttribute("sucesso", "Funcionario(a) excluído(a) com sucesso");
 		return "redirect:/funcionario/listar";
+	}
+	
+	@GetMapping("/buscar/{id}")
+	@ResponseBody
+	public List<LabelValue> buscar(@PathVariable("id") Integer id,
+			@RequestParam(value = "term", required = false, defaultValue = "") String term) {
+		List<LabelValue> suggeestions = new ArrayList<LabelValue>();
+
+		if (id == 1) {
+			Long matricula = Long.parseLong(term);
+			Funcionario allFuncionario = service.buscarPorMatricula(matricula);
+			if(allFuncionario != null) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(allFuncionario.getNome());
+				lv.setValue(allFuncionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		else if (id == 2) {
+			List<Funcionario> allFuncionario = service.ListarFuncionarioNome(term);
+			for (Funcionario funcionario : allFuncionario) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(funcionario.getNome());
+				lv.setValue(funcionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		else if (id == 3) {
+			List<Funcionario> allFuncionario = service.ListarFuncionarioCPF(term);
+			for (Funcionario funcionario : allFuncionario) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(funcionario.getNome());
+				lv.setValue(funcionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		else if (id == 4) {
+			List<Funcionario> allFuncionario = service.ListarFuncionarioCelular(term);
+			for (Funcionario funcionario : allFuncionario) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(funcionario.getNome());
+				lv.setValue(funcionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		else if (id == 5) {
+			List<Funcionario> allFuncionario = service.ListarFuncionarioCRM(term);
+			for (Funcionario funcionario : allFuncionario) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(funcionario.getNome());
+				lv.setValue(funcionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		else if (id == 6) {
+			List<Funcionario> allFuncionario = service.ListarFuncionarioEspecialidade(term);
+			for (Funcionario funcionario : allFuncionario) {
+				LabelValue lv = new LabelValue();
+				lv.setLabel(funcionario.getNome());
+				lv.setValue(funcionario.getId());
+				suggeestions.add(lv);
+			}
+		}
+
+		return suggeestions;
 	}
 	
 	//modal de cadastro

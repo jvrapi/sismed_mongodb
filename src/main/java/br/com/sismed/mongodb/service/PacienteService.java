@@ -76,7 +76,16 @@ public class PacienteService {
 
 	
 	public List<Paciente> PesquisarTelefone(String dado) {
-		return  pRepository.findByTelefone_fixo(dado);
+		Query query = new Query();
+		
+		if(dado.length() <= 3) {
+			query.addCriteria(Criteria.where("telefone_fixo").regex("\\" + dado));
+		}
+		else {
+			String array[] = dado.split("\\)");
+			query.addCriteria(Criteria.where("telefone_fixo").regex("\\" + array[0] + "\\)" + array[1]));
+		}
+		return template.find(query, Paciente.class);
 	}
 	
 	public List<Paciente> PesquisarCelular(String dado) {

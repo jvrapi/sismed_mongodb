@@ -189,6 +189,35 @@ public class FuncionarioService implements UserDetailsService {
 		funcionario.setLogin(l);
 
 		repository.save(funcionario);
+	}
+	
+	@Transactional(readOnly = true)
+	public Funcionario buscarPorMatricula(Long dado) {
+		return repository.findByMatricula(dado);
+	}
 
+	public List<Funcionario> ListarFuncionarioCPF(String dado) {
+		return repository.findByCpfRegex(dado);
+	}
+
+	public List<Funcionario> ListarFuncionarioCelular(String dado) {
+		Query query = new Query();
+		
+		if(dado.length() <= 3) {
+			query.addCriteria(Criteria.where("celular").regex("\\" + dado));
+		}
+		else {
+			String array[] = dado.split("\\)");
+			query.addCriteria(Criteria.where("celular").regex("\\" + array[0] + "\\)" + array[1]));
+		}
+		return template.find(query, Funcionario.class);
+	}
+
+	public List<Funcionario> ListarFuncionarioCRM(String dado) {
+		return repository.findByCrmRegex(dado);
+	}
+
+	public List<Funcionario> ListarFuncionarioEspecialidade(String dado) {
+		return repository.findByEspecialidadeRegex(dado);
 	}
 }

@@ -25,7 +25,7 @@ public class Funcionario extends AbstractEntity {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate data_emissao;
 
-	private Integer crm;
+	private String crm;
 
 	private String especialidade;
 
@@ -126,11 +126,11 @@ public class Funcionario extends AbstractEntity {
 		this.data_emissao = data_emissao;
 	}
 
-	public Integer getCrm() {
+	public String getCrm() {
 		return crm;
 	}
 
-	public void setCrm(Integer crm) {
+	public void setCrm(String crm) {
 		this.crm = crm;
 	}
 

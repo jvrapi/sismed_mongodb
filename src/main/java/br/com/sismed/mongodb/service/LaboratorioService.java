@@ -7,6 +7,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,9 @@ public class LaboratorioService {
 
 	@Autowired
 	private TConvenioService tipoConvenioService;
+	
+	@Autowired
+	private MongoTemplate template;
 
 	@Transactional(readOnly = true)
 	public List<Laboratorio> buscarTodos() {
@@ -66,7 +72,16 @@ public class LaboratorioService {
 	}
 
 	public List<Laboratorio> ListarLaboratorioTelefone(String term) {
-		return repository.findByTelefone(term);
+		Query query = new Query();
+		
+		if(term.length() <= 3) {
+			query.addCriteria(Criteria.where("telefone_fixo").regex("\\" + term));
+		}
+		else {
+			String array[] = term.split("\\)");
+			query.addCriteria(Criteria.where("telefone_fixo").regex("\\" + array[0] + "\\)" + array[1]));
+		}
+		return template.find(query, Laboratorio.class);
 	}
 
 	public List<Laboratorio> ListarLaboratorioBairro(String term) {
